@@ -24,7 +24,7 @@ Data will need to be collected before the system can be tuned to accurately repo
 We will be dealing with the physical world and hardware, which adds additional sources of problems to a purely-software system.
 Rice Coffeehouse is one of the most popular spots on campus, not just for their coffee, but also for the fun hangout and study ambience. It can be very disappointing to make a plan to visit Coffeehouse, just to arrive and see that there are no empty spots and the line is out the door. We can use a small example to illustrate the utility of our app. Say that our friend Dan, who just got out of his last class early, would like to stop by Coffeehouse for an Americano and to finish some reading for his next class. He could take his chances and hope for the best that it would not be that busy, but that could be disappointing if there are too many people there. To avoid this, Dan could open up “crwd,” in order to see if Coffeehouse is currently busy, and if it is, when the next time it will be less busy is. The website shows that Coffeehouse isn’t that busy, so Dan can enjoy a successful Coffeehouse trip and finish his readings.
 
-##Design / Attributes / Requirements
+## Design / Attributes / Requirements
 High-level component diagram:
 
 
@@ -32,7 +32,7 @@ High-level component diagram:
 
 
 
-##UI Sketch:
+## UI Sketch:
 
 - Scalability: More users/traffic can be handled by choosing appropriate cloud infrastructure. For example, serverless functions are designed to scale automatically, essentially removing this issue from our hands. In order to support more locations than just chaus, we can add another Raspberry Pi in each location we want to track. This will also require us to design the backend and frontend to be flexible and not make assumptions about having only one location source.
 - Reliability: The backend can check if the Raspberry Pi is not producing readings and attempt to remotely restart it. We can also have a mechanism to alert the developers of such issues. There can also be a feedback form for users to submit issues with the website.
@@ -78,7 +78,7 @@ Netlify for serving the website.
 Netlify Serverless Functions or AWS Lambda for the backend services.
 The free version should suffice for each of these services.
 
-##Milestones
+## Milestones
 Rigged demo (Week 8):  Set up the MongoDB database and add mock data in the format the Raspberry Pi will output, query from the database, and display the data in some initial, simple form on a website.
 
 MVP (Week 12): Have the Raspberry Pi collecting live data from Coffeehouse and feeding that data directly into the database (in a form that respects privacy), then using that data to display the real time business level on both the site. 
@@ -88,7 +88,7 @@ Final (Week 15): Include predictions for every hour of every week, and set up Ra
 
 
 
-##Development Process
+## Development Process
 Gradual refinement: We start with a rigged demo that has major systems stubbed out or simplified, but that’s enough to get the ball rolling and you make incremental improvements to our system, while always having something that “works”.
 React Site: Everyone 
 Raspberry Pi: Ryan Knightly
@@ -99,5 +99,5 @@ To track work: Trello that we update when we complete a task (and review every F
 Each task on Trello will be assigned to the person(s) in charge of completing it
 We plan to have a development branch on Github, make sure stuff works before moving the code to the main branch.
 
-##Decision-Making / Governance
+## Decision-Making / Governance
 We will vote on important decisions.

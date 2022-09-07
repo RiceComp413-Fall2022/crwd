@@ -25,22 +25,24 @@ We will be dealing with the physical world and hardware, which adds additional s
 Rice Coffeehouse is one of the most popular spots on campus, not just for their coffee, but also for the fun hangout and study ambience. It can be very disappointing to make a plan to visit Coffeehouse, just to arrive and see that there are no empty spots and the line is out the door. We can use a small example to illustrate the utility of our app. Say that our friend Dan, who just got out of his last class early, would like to stop by Coffeehouse for an Americano and to finish some reading for his next class. He could take his chances and hope for the best that it would not be that busy, but that could be disappointing if there are too many people there. To avoid this, Dan could open up “crwd,” in order to see if Coffeehouse is currently busy, and if it is, when the next time it will be less busy is. The website shows that Coffeehouse isn’t that busy, so Dan can enjoy a successful Coffeehouse trip and finish his readings.
 
 ## Design / Attributes / Requirements
-High-level component diagram:
+### High-level component diagram:
 
 
 
 
 
 
-## UI Sketch:
+### UI Sketch:
 
 - Scalability: More users/traffic can be handled by choosing appropriate cloud infrastructure. For example, serverless functions are designed to scale automatically, essentially removing this issue from our hands. In order to support more locations than just chaus, we can add another Raspberry Pi in each location we want to track. This will also require us to design the backend and frontend to be flexible and not make assumptions about having only one location source.
 - Reliability: The backend can check if the Raspberry Pi is not producing readings and attempt to remotely restart it. We can also have a mechanism to alert the developers of such issues. There can also be a feedback form for users to submit issues with the website.
 Performance: We can target allowing 500 people to use the website at once (which should not be an issue if we use appropriate hosting services). We can target a p99 latency of 150ms for queries to the backend to make sure the data loads quickly and the site is responsive.
+
 ## Security
 - Authentication: Since people from outside of Rice also enjoy visiting Coffeehouse, we don’t believe that any extra authentication would be necessary for accessing the website
 - Separation: The only data that will be broadcasted to the website is how busy Coffeehouse is, which is calculated based on averages and percentiles and displayed in the form of a cartoon progress bar, and how busy Coffeehouse is predicted to be everyday of the week.
 - Threat model: An adversary to our model could be someone making a multitude of requests to the site, or a Coffeehouse patron showing up a large number of wifi-enabled devices.
+
 ## Implementation / Testing
 What programming language(s) and tools will you use?
 Frontend: TypeScript (React)

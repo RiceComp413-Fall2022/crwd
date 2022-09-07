@@ -7,22 +7,24 @@ Manaal Khan /  mk90@rice.edu
 Ryan Knightly / rek5@rice.edu
 Daphne Yang / dy27@rice.edu
  
-DUE DATE: Wednesday, September 7, 11:59pm
-The Catchy Name
+## The Catchy Name
 crwd
-The Pitch
+
+## The Pitch
 Wouldn’t it be great to know how busy chaus (or any public place) is before showing up and realizing that the line is too long? To do this, we can build a system that monitors the crowdedness of a place (e.g. Rice Coffeehouse) and reports both its real time and predicted business in a simple frontend to the users. We can set up a WiFi-enabled Raspberry Pi in the place of interest that monitors how many WiFi devices are nearby. The Pi can upload this data to a backend, which would do some processing and then store it in a database. The frontend can then query this information and display it to users.
-Background / Use case
+
+## Background / Use case
 As Houston’s most visited coffee shop, the world is often wondering: When’s the best time to visit Rice Coffeehouse? Our system would enable people to view both the real-time and predicted crowd levels at Coffeehouse. Fondren Library solves this problem with a digital sign showing the percentage of each floor that is occupied by students. Their data comes from the network and how many devices are connected to the various modems throughout the library. Another solution can be found in Google Maps’ “Popular Times” graph that appears for each location. Google Maps uses location data from people who have opted-in to share their location with Google.
  
-Potential obstacles and difficulties:
+## Potential obstacles and difficulties:
 Not every WiFi device corresponds to a Rice Coffeehouse customer, and not every person in Coffeehouse is waiting in line. Detected devices may need to be filtered out based on various factors (signal strength, time since arrival) to provide a more useful sense of crowdedness.
 What about the privacy issues of observing and storing MAC addresses? Maybe the data should be transformed in some way (hashed?) before being sent to the backend.
+
 Data will need to be collected before the system can be tuned to accurately report 100% vs 50% vs 25% crowdedness.
 We will be dealing with the physical world and hardware, which adds additional sources of problems to a purely-software system.
 Rice Coffeehouse is one of the most popular spots on campus, not just for their coffee, but also for the fun hangout and study ambience. It can be very disappointing to make a plan to visit Coffeehouse, just to arrive and see that there are no empty spots and the line is out the door. We can use a small example to illustrate the utility of our app. Say that our friend Dan, who just got out of his last class early, would like to stop by Coffeehouse for an Americano and to finish some reading for his next class. He could take his chances and hope for the best that it would not be that busy, but that could be disappointing if there are too many people there. To avoid this, Dan could open up “crwd,” in order to see if Coffeehouse is currently busy, and if it is, when the next time it will be less busy is. The website shows that Coffeehouse isn’t that busy, so Dan can enjoy a successful Coffeehouse trip and finish his readings.
 
-Design / Attributes / Requirements
+##Design / Attributes / Requirements
 High-level component diagram:
 
 

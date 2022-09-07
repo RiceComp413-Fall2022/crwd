@@ -32,16 +32,16 @@ High-level component diagram:
 
 
 
-UI Sketch:
+##UI Sketch:
 
-Scalability: More users/traffic can be handled by choosing appropriate cloud infrastructure. For example, serverless functions are designed to scale automatically, essentially removing this issue from our hands. In order to support more locations than just chaus, we can add another Raspberry Pi in each location we want to track. This will also require us to design the backend and frontend to be flexible and not make assumptions about having only one location source.
-Reliability: The backend can check if the Raspberry Pi is not producing readings and attempt to remotely restart it. We can also have a mechanism to alert the developers of such issues. There can also be a feedback form for users to submit issues with the website.
+- Scalability: More users/traffic can be handled by choosing appropriate cloud infrastructure. For example, serverless functions are designed to scale automatically, essentially removing this issue from our hands. In order to support more locations than just chaus, we can add another Raspberry Pi in each location we want to track. This will also require us to design the backend and frontend to be flexible and not make assumptions about having only one location source.
+- Reliability: The backend can check if the Raspberry Pi is not producing readings and attempt to remotely restart it. We can also have a mechanism to alert the developers of such issues. There can also be a feedback form for users to submit issues with the website.
 Performance: We can target allowing 500 people to use the website at once (which should not be an issue if we use appropriate hosting services). We can target a p99 latency of 150ms for queries to the backend to make sure the data loads quickly and the site is responsive.
-Security
-Authentication: Since people from outside of Rice also enjoy visiting Coffeehouse, we don’t believe that any extra authentication would be necessary for accessing the website
-Separation: The only data that will be broadcasted to the website is how busy Coffeehouse is, which is calculated based on averages and percentiles and displayed in the form of a cartoon progress bar, and how busy Coffeehouse is predicted to be everyday of the week.
-Threat model: An adversary to our model could be someone making a multitude of requests to the site, or a Coffeehouse patron showing up a large number of wifi-enabled devices.
-Implementation / Testing
+## Security
+- Authentication: Since people from outside of Rice also enjoy visiting Coffeehouse, we don’t believe that any extra authentication would be necessary for accessing the website
+- Separation: The only data that will be broadcasted to the website is how busy Coffeehouse is, which is calculated based on averages and percentiles and displayed in the form of a cartoon progress bar, and how busy Coffeehouse is predicted to be everyday of the week.
+- Threat model: An adversary to our model could be someone making a multitude of requests to the site, or a Coffeehouse patron showing up a large number of wifi-enabled devices.
+## Implementation / Testing
 What programming language(s) and tools will you use?
 Frontend: TypeScript (React)
 Server: TypeScript (web/JSON friendly) or Python (ML-friendly) ?
@@ -77,7 +77,8 @@ Atlas for a hosted MongoDB database.
 Netlify for serving the website.
 Netlify Serverless Functions or AWS Lambda for the backend services.
 The free version should suffice for each of these services.
-Milestones
+
+##Milestones
 Rigged demo (Week 8):  Set up the MongoDB database and add mock data in the format the Raspberry Pi will output, query from the database, and display the data in some initial, simple form on a website.
 
 MVP (Week 12): Have the Raspberry Pi collecting live data from Coffeehouse and feeding that data directly into the database (in a form that respects privacy), then using that data to display the real time business level on both the site. 
@@ -87,7 +88,7 @@ Final (Week 15): Include predictions for every hour of every week, and set up Ra
 
 
 
-Development Process
+##Development Process
 Gradual refinement: We start with a rigged demo that has major systems stubbed out or simplified, but that’s enough to get the ball rolling and you make incremental improvements to our system, while always having something that “works”.
 React Site: Everyone 
 Raspberry Pi: Ryan Knightly
@@ -97,5 +98,6 @@ Predictions: Manaal Khan and Audrey Deigaard
 To track work: Trello that we update when we complete a task (and review every Friday)
 Each task on Trello will be assigned to the person(s) in charge of completing it
 We plan to have a development branch on Github, make sure stuff works before moving the code to the main branch.
-Decision-Making / Governance
+
+##Decision-Making / Governance
 We will vote on important decisions.

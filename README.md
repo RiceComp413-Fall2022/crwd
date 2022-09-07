@@ -2,10 +2,10 @@
 
 Comp413 Proposal Template, Fall 2022
 
-Audrey Deigaard / acd7@rice.edu
-Manaal Khan /  mk90@rice.edu
-Ryan Knightly / rek5@rice.edu
-Daphne Yang / dy27@rice.edu
+- Audrey Deigaard / acd7@rice.edu
+- Manaal Khan /  mk90@rice.edu
+- Ryan Knightly / rek5@rice.edu
+- Daphne Yang / dy27@rice.edu
  
 ## The Catchy Name
 crwd

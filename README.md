@@ -1,6 +1,5 @@
 # crwd
 
-Comp413 Proposal Template, Fall 2022
 
 - Audrey Deigaard / acd7@rice.edu
 - Manaal Khan /  mk90@rice.edu

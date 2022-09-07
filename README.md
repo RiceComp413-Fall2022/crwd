@@ -32,6 +32,7 @@ Rice Coffeehouse is one of the most popular spots on campus, not just for their 
 
 
 ### UI Sketch:
+![UI Sketch](/ui.jpeg)
 
 - Scalability: More users/traffic can be handled by choosing appropriate cloud infrastructure. For example, serverless functions are designed to scale automatically, essentially removing this issue from our hands. In order to support more locations than just chaus, we can add another Raspberry Pi in each location we want to track. This will also require us to design the backend and frontend to be flexible and not make assumptions about having only one location source.
 - Reliability: The backend can check if the Raspberry Pi is not producing readings and attempt to remotely restart it. We can also have a mechanism to alert the developers of such issues. There can also be a feedback form for users to submit issues with the website.

@@ -28,7 +28,7 @@ Rice Coffeehouse is one of the most popular spots on campus, not just for their 
 
 ## Design / Attributes / Requirements
 ### High-level component diagram:
-
+![UML Diagram](/uml.png)
 
 
 

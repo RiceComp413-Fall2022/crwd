@@ -1,1 +1,5 @@
+# Frontend Dependencies
+node_modules
+
+# Mac File
 .DS_Store

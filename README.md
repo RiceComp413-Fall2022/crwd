@@ -38,7 +38,7 @@ npm run test
 ### Initial Setup
 
 ```bash
-pip3 install -m requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### Running the App

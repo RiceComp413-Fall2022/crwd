@@ -6,3 +6,6 @@ node_modules
 
 # Mac File
 .DS_Store
+
+# PyCharm
+.idea

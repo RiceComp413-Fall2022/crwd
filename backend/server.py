@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from pymongo import MongoClient
 import pymongo
 import os
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+CORS(app) # Allow Cross-Origin Resource Sharing
 
 load_dotenv('.env')
 

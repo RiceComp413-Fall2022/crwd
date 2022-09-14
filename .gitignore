@@ -1,5 +1,8 @@
-# Frontend Dependencies
+# Frontend (TS)
 node_modules
+
+# Backend (Python)
+*.pyc
 
 # Mac File
 .DS_Store

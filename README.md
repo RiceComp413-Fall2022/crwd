@@ -28,6 +28,27 @@ npm install
 npm run start
 ```
 
+### Running Tests
+```bash
+npm run test
+```
+
 ## Backend (Flask Server)
+
+### Initial Setup
+
+```bash
+pip3 install -m requirements.txt
+```
+
+### Running the App
+```bash
+python3 server.py
+```
+
+### Running Tests
+```bash
+python3 -m unittest discover ./test
+```
 
 ## Sensor (Python Script)

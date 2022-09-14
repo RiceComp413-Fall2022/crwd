@@ -12,15 +12,14 @@ CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
 
 def get_database():
     client = MongoClient(CONNECTION_STRING)
-    return client['test1']
+    return client['crwd']
 
 @app.route('/getData')
 def get_data():
     dbname = get_database()
     print(dbname)
     # Create a new collection
-    # collection_name = dbname['TestData']
-    collection_name = dbname['audrey']
+    collection_name = dbname['TestData']
     print(collection_name)
     jsn = []
     item_details = collection_name.find()

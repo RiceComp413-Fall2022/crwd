@@ -16,39 +16,34 @@ https://docs.google.com/document/d/1umKnb4pe47abechjmZ10AYvQPR0TGF1hE9PGJhB-iZY/
 
 ## Frontend (React App)
 
-### Initial Setup
-
 ```bash
+# Setup
 cd frontend
 npm install
-```
 
-### Running the App
-```bash
-npm run start
-```
-
-### Running Tests
-```bash
+# Test
 npm run test
+
+# Run
+npm run start
 ```
 
 ## Backend (Flask Server)
 
-### Initial Setup
-
 ```bash
+# Setup
 pip3 install -r requirements.txt
-```
 
-### Running the App
-```bash
+# Test
+python3 -m unittest discover ./test
+
+# Run
 python3 server.py
 ```
 
-### Running Tests
-```bash
-python3 -m unittest discover ./test
-```
-
 ## Sensor (Python Script)
+
+## Convenience Scripts
+
+1. `./RunApp` will run both the frontend and the backend.
+2. `./TestApp` will test both the frontend and the backend.

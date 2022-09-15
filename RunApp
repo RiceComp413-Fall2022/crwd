@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run backend
+function backend {
+  echo "===========[Running backend]==========="
+  cd backend
+  python3 server.py
+}
+
+# Run frontend
+function frontend {
+  echo "\n===========[Running frontend]==========="
+  cd frontend
+  npm run start
+}
+
+frontend & backend

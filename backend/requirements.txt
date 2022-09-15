@@ -1,4 +1,4 @@
 flask===2.2.2
-pymongo===4.2.0
+pymongo[srv]===4.2.0
 python-dotenv===0.21.0
 Flask-Cors===3.0.10

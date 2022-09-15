@@ -3,6 +3,7 @@ node_modules
 
 # Backend (Python)
 *.pyc
+.env
 
 # Mac File
 .DS_Store

@@ -31,17 +31,20 @@ function App() {
         <h1>
           Welcome to crwd.io
         </h1>
-
-        <p>Check out the project on <a href="https://github.com/RiceComp413-Fall2022/crwd">GitHub</a>!</p>
-        
+      </header>
+      <body className="App-body">
         <p>Response from server (127.0.0.1:500):</p>
-        <p>{helloWorldResponse}</p>
+        <pre id="GFG_DOWN" style={{"color":"LightGreen", "fontSize":"16px"}}>
+          {helloWorldResponse}
+        </pre>
 
         <p>Data from server (127.0.0.1:500/getData):</p>
-        <pre id="GFG_DOWN" style={{"color":"LightGreen", "fontSize":"15px", "fontWeight": "bold"}}>
-          <p>{JSON.stringify(dataResponse, undefined, 4)}</p>
+        <pre id="GFG_DOWN" style={{"color":"LightGreen", "fontSize":"16px"}}>
+          {JSON.stringify(dataResponse, undefined, 4)}
         </pre>
-      </header>
+
+        <p>Check out the project on <a href="https://github.com/RiceComp413-Fall2022/crwd">GitHub</a>!</p>
+      </body>
     </div>
   );
 }

@@ -1,14 +1,17 @@
-.App-header {
-  background-color: #282c34;
+.App {
   min-height: 100vh;
+  background-color: #282c34;
+}
+
+.App-header, .App-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(8px + 2vmin);
   color: white;
 }
 
-.App-header a {
+.App-body a {
   color: white;
 }

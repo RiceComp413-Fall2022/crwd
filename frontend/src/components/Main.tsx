@@ -5,26 +5,26 @@ import {
 } from "react-router-dom";
 import StatusBox from './StatusBox';
 import Chart from './Chart';
+import { Col, Container, Row } from 'react-bootstrap';
 
 function Main() {
 
   return (
     <div className="Main">
       <div>
-        <h2>Main Page</h2>
+        <h2 style={ {textAlign:"center"} }>crwd.io</h2>
       </div>
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/status">Status</Link>
-          </li>
-        </ul>
-      </div>
-      <StatusBox/>
-      <Chart/>
+
+      <Container>
+        <Row>
+        <Col>
+          <Chart/>
+        </Col>
+        <Col>
+          <StatusBox/>
+        </Col>
+        </Row>
+      </Container>
     </div>
   );
 }

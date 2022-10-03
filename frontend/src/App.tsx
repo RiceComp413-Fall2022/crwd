@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './components/Main';
-import Status from './components/Status';
-import NoPageError from './components/NoPageError';
+import Home from './pages/Main';
+import Status from './pages/Status';
+import NoPageError from './pages/NoPageError';
 
 function App() {
   return (

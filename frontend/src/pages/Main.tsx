@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import '../App.css';
-import {
-  Link
-} from "react-router-dom";
-import StatusBox from './StatusBox';
-import Chart from './Chart';
+import StatusBox from '../components/StatusBox';
+import Graph from '../components/Graph';
 import { Col, Container, Row } from 'react-bootstrap';
 
 function Main() {
@@ -17,12 +13,14 @@ function Main() {
 
       <Container>
         <Row>
-        <Col>
-          <Chart/>
-        </Col>
-        <Col>
-          <StatusBox/>
-        </Col>
+          {/* Left half: Graph */}
+          <Col>
+            <Graph/>
+          </Col>
+          {/* Right half: Status */}
+          <Col>
+            <StatusBox/>
+          </Col>
         </Row>
       </Container>
     </div>

@@ -5,7 +5,7 @@ import NoPageError from './components/NoPageError';
 
 function App() {
 return (        
-    <Routes>
+  <Routes>
     <Route path='/' element={<Home/>} />
     <Route path='/status' element={<Status/>} />
     <Route path='/*' element={<NoPageError/>} />

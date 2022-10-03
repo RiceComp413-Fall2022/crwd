@@ -29,10 +29,9 @@ class Service:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
-        df = pd.DataFrame(self.data, columns =['DateTime', 'NumPeople'])
-        df['DateTime'] = pd.to_datetime(df['DateTime'])
-        df['CrowdPercentage'] = df['NumPeople'] / self.capacity * 100
-        return list(df['CrowdPercentage'])
+        datetime_to_perc = {tup[0]: tup[1]/ self.capacity * 100 for tup in self.data}
+        return datetime_to_perc
+
 
 
     def get_current_crowd(self) -> String:

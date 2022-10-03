@@ -18,7 +18,7 @@ def generate_dummy_data(n_rows, interval_minutes, initial_n_devices=50) -> List[
         time = start_time - timedelta(minutes=i*interval_minutes)
         # Add a random value to n_devices and prevent negatives
         n_devices = max(0, n_devices + round(gauss(0, 2)))
-        pair = (time.strftime("%d/%m/%Y %H:%M:%S"), n_devices)
+        pair = (time.strftime("%d/%m/%Y %H:%M"), n_devices)
         result.append(pair)
     
     return result

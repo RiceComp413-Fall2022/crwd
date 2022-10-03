@@ -4,6 +4,7 @@ import {
   Link
 } from "react-router-dom";
 import StatusBox from './StatusBox';
+import Chart from './Chart';
 
 function Main() {
 
@@ -23,6 +24,7 @@ function Main() {
         </ul>
       </div>
       <StatusBox/>
+      <Chart/>
     </div>
   );
 }

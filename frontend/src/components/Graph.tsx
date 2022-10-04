@@ -70,6 +70,9 @@ function Graph() {
     elements: {
       point:{
         radius: 0 // no dots
+      },
+      line: {
+        tension: 0.4 // how straight (0) or curvy the line is
       }
     }
   };

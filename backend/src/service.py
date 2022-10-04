@@ -1,31 +1,33 @@
 from tokenize import String
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import dummy_data
 import pandas as pd
-import datetime
+from datetime import datetime
 import math
 
 class Service:
-    def __init__(self, opening_time):
+    def __init__(self, opening_time: datetime):
         self.capacity = 102
         self.opening_time = opening_time
         self.data = self.get_data()
 
 
-    def get_data(self) -> List[Dict]:
+    def get_data(self) -> List[Tuple[str, int]]:
         '''
         Sets the global data variable by generating dummy data.
         '''
-        curr_time = datetime.datetime.now()
+        curr_time = datetime.now()
         diff = curr_time - self.opening_time
         # calc how many minutes have passed since opening
-        num_values = math.ceil(diff.total_seconds() / 60)
+        num_minutes = math.ceil(diff.total_seconds() / 60)
+        minutes_between_values = 30
+        num_values = math.ceil(num_minutes / minutes_between_values)
         # get a crowd value for each minute
-        people_data = dummy_data.generate_dummy_data(num_values, 1, initial_n_devices=50)
+        people_data = dummy_data.generate_dummy_data(num_values, minutes_between_values, initial_n_devices=50)
         return people_data
         
 
-    def get_crowd(self) -> List[float]:
+    def get_crowd(self) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
@@ -33,8 +35,7 @@ class Service:
         return datetime_to_perc
 
 
-
-    def get_current_crowd(self) -> String:
+    def get_current_crowd(self) -> str:
         '''
         Returns a message that indicates how busy Chaus is at the moment.
         '''

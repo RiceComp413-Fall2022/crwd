@@ -55,6 +55,9 @@ function Graph() {
         ticks: {
           autoSkip: true,
           maxTicksLimit: 8
+        },
+        grid: {
+          display: false
         }
       },
       yAxis: {
@@ -64,6 +67,9 @@ function Graph() {
           font: {
             size: 20
           }
+        },
+        grid: {
+          display: false
         }
       }
     },

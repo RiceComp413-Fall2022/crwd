@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../App.css';
-import Alert from 'react-bootstrap/Alert';
+import { Card } from 'react-bootstrap';
+
+import './StatusBox.css'
 
 function StatusBox() {
 
@@ -17,9 +18,11 @@ function StatusBox() {
   }, [])
 
   return (
-    <Alert  variant={'success'}>
-    {crowdResponse}
-  </Alert>
+    <Card className="textBox">
+      <Card.Body>
+        {crowdResponse}
+      </Card.Body>
+    </Card>
   );
 }
 

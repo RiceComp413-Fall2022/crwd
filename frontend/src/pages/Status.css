@@ -1,17 +1,17 @@
-.App {
+.Status {
   min-height: 100vh;
-  background-color: #282c34;
 }
 
-.App-header, .App-body {
+.Status-header, .Status-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   font-size: calc(8px + 2vmin);
   color: white;
+  background-color: #282c34;
 }
 
-.App-body a {
+.Status-body a {
   color: white;
 }

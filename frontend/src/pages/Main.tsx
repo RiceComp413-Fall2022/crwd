@@ -3,26 +3,26 @@ import StatusBox from '../components/StatusBox';
 import Graph from '../components/Graph';
 import { Col, Container, Row } from 'react-bootstrap';
 
+import './Main.css';
+
 function Main() {
 
   return (
-    <div className="Main">
+    <div className="main">
       <div>
-        <h2 style={ {textAlign:"center"} }>crwd.io</h2>
+        <h1 className="title">crwd.io</h1>
       </div>
 
-      <Container>
-        <Row>
-          {/* Left half: Graph */}
-          <Col>
-            <Graph/>
-          </Col>
-          {/* Right half: Status */}
-          <Col>
-            <StatusBox/>
-          </Col>
-        </Row>
-      </Container>
+      <Row className="align-items-center">
+        {/* Left half: Graph */}
+        <Col className="col-9">
+          <Graph/>
+        </Col>
+        {/* Right half: Status */}
+        <Col className="col-3">
+          <StatusBox/>
+        </Col>
+      </Row>
     </div>
   );
 }

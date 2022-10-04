@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../App.css';
+import './Status.css';
 
 function Status() {
 
@@ -26,13 +26,13 @@ function Status() {
   }, [])
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="Status">
+      <header className="Status-header">
         <h1>
           Welcome to crwd.io
         </h1>
       </header>
-      <body className="App-body">
+      <body className="Status-body">
         <p>Response from server (127.0.0.1:5000):</p>
         <pre id="GFG_DOWN" style={{"color":"LightGreen", "fontSize":"16px"}}>
           {helloWorldResponse}

@@ -1,13 +1,18 @@
 .main {
   background-color: #F4F1DE;
   min-height: 100vh;
-  padding: 10vh;
+  padding-top: 4vh;
+  padding-left: 15%;
+  padding-right: 15%;
 }
 
 .title {
-  padding-bottom: 5vh;
   text-align: center;
   font-weight: bolder;
   color: #E07A5F;
   font-size: 5rem;
+}
+
+.row {
+  padding-bottom: 2vh;
 }

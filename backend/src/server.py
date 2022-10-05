@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from flask import Flask
 from flask_cors import CORS
 from service import Service
@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/getData')
-def get_data_route() -> List[Dict]:
+def get_data_route() -> List[Tuple[str, int]]:
     return service_obj.get_data()
 
 

@@ -1,12 +1,21 @@
 # Frontend (TS)
 node_modules
 
+
 # Backend (Python)
 *.pyc
 .env
 
-# Mac File
+
+# Monitor (Python)
+log.json
+# List of Mac addresses
+oui.txt
+
+
+# Mac Files
 .DS_Store
+
 
 # PyCharm
 .idea

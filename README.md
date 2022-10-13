@@ -43,6 +43,18 @@ python3 server.py
 
 ## Sensor (Python Script)
 
+### Requirements / Setup
+The sensor script is adapted from another project called [howmanypeoplearearound](https://github.com/schollz/howmanypeoplearearound).
+Follow that README to set up wireshark.
+
+```bash
+# Setup
+pip3 install -r requirements.txt
+
+# Run (sudo to set the wifi adapter to monitor mode.)
+sudo python3 sensor.py
+```
+
 ## Convenience Scripts
 
 1. `./RunApp` will run both the frontend and the backend.

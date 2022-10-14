@@ -13,9 +13,13 @@ from util.monitor_mode import enable_monitor_mode
 
 from crwd.reportndevices import report_n_devices
 
+
+TEST_SCAN_SECONDS = 1
+
+
 @click.command()
 @click.option('-a', '--adapter', default='', help='adapter to use')
-@click.option('-s', '--scantime', default='60', help='time in seconds to scan')
+@click.option('-s', '--scantime', default='30', help='time in seconds to scan')
 @click.option('-o', '--out', default='log.json', help='output cellphone data to file')
 @click.option('-d', '--dictionary', default='oui.txt', help='OUI dictionary')
 @click.option('-v', '--verbose', help='verbose mode', is_flag=True)
@@ -31,21 +35,36 @@ from crwd.reportndevices import report_n_devices
 def main(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, out, allmacaddresses, manufacturers, nocorrection, sort, targetmacs, pcap):
     # Check for root privelages
     if os.geteuid() != 0:
-        "Please run as root (to enable switching adapter to monitor mode)."
+        print("Please run as root (to enable switching adapter to monitor mode).")
+        return
     
     # Choose adapter
     if len(adapter) == 0:
         adapter = choose_adapter()
     
-    # Enable monitor mode
-    # TODO: periodically re-enable monitor mode in case it resets during execution
     enable_monitor_mode(adapter)
+
+    # Test run
+    print(f"Running test scan.")
+    num_people = run_scan(adapter, str(TEST_SCAN_SECONDS), verbose, dictionary, number,
+            nearby, jsonprint, out, allmacaddresses, manufacturers, nocorrection, True, sort, targetmacs, pcap)
+    if num_people == -1:
+        print("Test scan failed. Double-check wifi adapter is in monitor mode. Exiting.")
+        return
+    else:
+        print(f"Test scan succeeded. The selected wifi adapter appears to be in monitor mode.")
+        print()
 
     # Loop forever
     while True:
         # Run scan
-        adapter, num_people = run_scan(adapter, scantime, verbose, dictionary, number,
+        num_people = run_scan(adapter, scantime, verbose, dictionary, number,
                 nearby, jsonprint, out, allmacaddresses, manufacturers, nocorrection, True, sort, targetmacs, pcap)
+
+        if num_people == -1:
+            print("Scan failed. Re-enabling monitor mode before next scan.")
+            # re-enable monitor mode in case it resets during execution
+            enable_monitor_mode(adapter)
         
         # Report to backend
         report_n_devices(num_people)

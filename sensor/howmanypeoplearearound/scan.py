@@ -58,7 +58,10 @@ def fileToMacSet(path):
 
 
 def run_scan(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, out, allmacaddresses, manufacturers, nocorrection, loop, sort, targetmacs, pcap):
-    """Monitor wifi signals to count the number of people around you"""
+    """
+    Monitor wifi signals to count the number of people around you.
+    Returns the number of people or -1 if no signals are observed (indicating issue with wifi adapter).
+    """
 
     # print("OS: " + os.name)
     # print("Platform: " + platform.system())
@@ -162,7 +165,7 @@ def run_scan(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, 
 
     if not foundMacs:
         print("Found no signals, are you sure %s supports monitor mode?" % adapter)
-        return adapter, 0
+        return -1
         #sys.exit(1)
 
     for key, value in foundMacs.items():
@@ -241,5 +244,5 @@ def run_scan(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, 
             print("Wrote %d records to %s" % (len(cellphone_people), out))
     if not pcap:
         os.remove(dump_file)
-    return adapter, num_people
+    return num_people
 

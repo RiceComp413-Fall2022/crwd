@@ -41,6 +41,7 @@ class Service:
         '''
         current_crowd = self.data[len(self.data) - 1][1]
         perc = current_crowd/self.capacity * 100
+        tiem = self.data[len(self.data) - 1][0]
         message = ''
         if perc > 90:
             message = 'Chaus is super busy!'
@@ -50,7 +51,7 @@ class Service:
             message = 'Now is a good time to go to Chaus!'
         else:
             message = 'Chaus is empty!'
-        return {'msg': message, 'perc': perc}
+        return {'msg': message, 'perc': perc, 'time': time}
 
     
     def update_total_devices(self, num_devices) -> None:

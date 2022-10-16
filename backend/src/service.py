@@ -9,10 +9,10 @@ class Service:
     def __init__(self, opening_time):
         self.capacity = 102
         self.opening_time = opening_time
-        self.data = self.get_data()
+        self.data = []
 
 
-    def get_data(self) -> List[Dict]:
+    def get_dummy_data(self) -> List[Dict]:
         '''
         Sets the global data variable by generating dummy data.
         '''
@@ -25,16 +25,17 @@ class Service:
         return people_data
         
 
-    def get_crowd(self) -> List[float]:
+    def get_crowd_perc(self) -> List[float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
-        datetime_to_perc = {tup[0]: tup[1]/ self.capacity * 100 for tup in self.data}
+        data = self.data if len(self.data) != 0 else self.get_dummy_data()
+        datetime_to_perc = {tup[0]: tup[1]/ self.capacity * 100 for tup in data}
         return datetime_to_perc
 
 
 
-    def get_current_crowd(self) -> String:
+    def get_crowd_message(self) -> String:
         '''
         Returns a message that indicates how busy Chaus is at the moment.
         '''
@@ -50,3 +51,10 @@ class Service:
         else:
             message = 'Chaus is empty!'
         return message
+
+    
+    def update_total_devices(self, num_devices) -> None:
+        time = datetime.datetime.now()
+        pair = (time.strftime("%d/%m/%Y %H:%M"), int(num_devices))
+        self.data.append(pair)
+        return 

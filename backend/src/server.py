@@ -1,4 +1,5 @@
-from typing import List, Dict
+from tokenize import String
+from typing import List, Dict, Tuple
 from flask import Flask
 from flask_cors import CORS
 from service import Service
@@ -16,17 +17,17 @@ def get_data_route() -> List[Dict]:
 
 
 @app.route('/')
-def hello():
+def hello() -> String:
     return 'Hello, World!'
 
 
-@app.route('/getCurrentCrowd')
+@app.route('/getCrowdMessage')
 def get_curr_crowd_route():
     return service_obj.get_crowd_message()
 
 
 @app.route('/getCrowd')
-def get_crowd_route():
+def get_crowd_route() -> Dict:
     return service_obj.get_crowd_perc()
 
 

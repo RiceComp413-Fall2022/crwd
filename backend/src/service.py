@@ -1,5 +1,5 @@
 from tokenize import String
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import dummy_data
 import pandas as pd
 import datetime
@@ -35,7 +35,7 @@ class Service:
 
 
 
-    def get_crowd_message(self) -> String:
+    def get_crowd_message(self):
         '''
         Returns a message that indicates how busy Chaus is at the moment.
         '''
@@ -50,7 +50,7 @@ class Service:
             message = 'Now is a good time to go to Chaus!'
         else:
             message = 'Chaus is empty!'
-        return message
+        return {'msg': message, 'perc': perc}
 
     
     def update_total_devices(self, num_devices) -> None:

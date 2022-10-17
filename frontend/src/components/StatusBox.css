@@ -1,0 +1,13 @@
+.textBox {
+  background-color: #81B29A !important;
+  border-radius: 20px !important;
+  color: white;
+  font-weight: bolder;
+  text-align: center;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+}
+
+.card-body {
+  padding: 1.5vh !important;
+}

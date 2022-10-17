@@ -1,0 +1,18 @@
+.main {
+  background-color: #F4F1DE;
+  min-height: 100vh;
+  padding-top: 4vh;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.title {
+  text-align: center;
+  font-weight: bolder;
+  color: #E07A5F;
+  font-size: calc(6vh + 2rem);
+}
+
+.row {
+  padding-bottom: calc(1vh + 1rem);
+}

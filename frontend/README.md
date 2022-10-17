@@ -1,3 +1,8 @@
+# NOTE: The following command is to install the react-router-dom package.  It only needs to be run once.
+
+To install React Router, all you have to do is run **npm install react-router-dom@6** in your project terminal under frontend and then wait for the installation to complete.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

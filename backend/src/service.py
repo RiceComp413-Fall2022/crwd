@@ -25,7 +25,7 @@ class Service:
         return people_data
         
 
-    def get_crowd_perc(self) -> List[float]:
+    def get_all_data(self) -> List[float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
@@ -35,7 +35,7 @@ class Service:
 
 
 
-    def get_crowd_message(self):
+    def get_curr_status(self):
         '''
         Returns a message that indicates how busy Chaus is at the moment.
         '''

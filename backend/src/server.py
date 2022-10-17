@@ -11,7 +11,7 @@ app = Flask(__name__)
  # Allow Cross-Origin Resource Sharing
 CORS(app)
 
-@app.route('/getData')
+@app.route('/getDummyData')
 def get_data_route() -> List[Dict]:
     return service_obj.get_dummy_data()
 
@@ -21,20 +21,19 @@ def hello() -> String:
     return 'Hello, World!'
 
 
-@app.route('/getCrowdMessage')
-def get_curr_crowd_route():
-    return service_obj.get_crowd_message()
+@app.route('/getCurrentStatus')
+def get_curr_status_route():
+    return service_obj.get_curr_status()
 
 
-@app.route('/getCrowd')
-def get_crowd_route() -> Dict:
-    return service_obj.get_crowd_perc()
+@app.route('/getAllData')
+def get_all_data_route() -> Dict:
+    return service_obj.get_all_data()
 
 
 @app.route('/updateTotalDevices/<numDevices>')
 def update_total_devices_route(numDevices):
     service_obj.update_total_devices(numDevices)
-    return service_obj.data
 
 
 if __name__ == '__main__':

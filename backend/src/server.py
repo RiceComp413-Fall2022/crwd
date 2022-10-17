@@ -1,4 +1,3 @@
-from tokenize import String
 from typing import List, Dict, Tuple
 from flask import Flask
 from flask_cors import CORS
@@ -12,12 +11,12 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/getDummyData')
-def get_data_route() -> List[Dict]:
+def get_data_route() -> List[Tuple[str, int]]:
     return service_obj.get_dummy_data()
 
 
 @app.route('/')
-def hello() -> String:
+def hello() -> str:
     return 'Hello, World!'
 
 
@@ -34,6 +33,7 @@ def get_all_data_route() -> Dict:
 @app.route('/updateTotalDevices/<numDevices>')
 def update_total_devices_route(numDevices):
     service_obj.update_total_devices(numDevices)
+    return 'update succeeded'
 
 
 if __name__ == '__main__':

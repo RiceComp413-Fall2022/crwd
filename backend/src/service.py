@@ -1,4 +1,3 @@
-from tokenize import String
 from typing import List, Dict, Tuple
 import dummy_data
 import pandas as pd
@@ -12,7 +11,7 @@ class Service:
         self.data = []
 
 
-    def get_dummy_data(self) -> List[Dict]:
+    def get_dummy_data(self) -> List[Tuple[str, int]]:
         '''
         Sets the global data variable by generating dummy data.
         '''
@@ -56,7 +55,7 @@ class Service:
 
 
     def update_total_devices(self, num_devices) -> None:
-        time = datetime.datetime.now()
+        time = datetime.now()
         pair = (time.strftime("%d/%m/%Y %H:%M"), int(num_devices))
         self.data.append(pair)
         return

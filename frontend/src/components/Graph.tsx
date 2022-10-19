@@ -12,6 +12,7 @@ import {
 import { Line } from 'react-chartjs-2';
 
 import './Graph.css'
+import { BACKEND_URL } from '../Constants';
 
 function Graph() {
   // Store server response
@@ -19,7 +20,7 @@ function Graph() {
 
   // Fetch /getData from server
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/getAllData")
+    fetch(BACKEND_URL + "/getAllData")
     .then((response) => response.json())
     .then((response) => {
       setChausData(response);

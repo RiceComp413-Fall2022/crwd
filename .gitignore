@@ -1,5 +1,6 @@
 # Frontend (TS)
 node_modules
+build/
 
 # Backend (Python)
 *.pyc

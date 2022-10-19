@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
+import { BACKEND_URL } from '../Constants';
 
 import './StatusBox.css'
 
@@ -10,7 +11,7 @@ function StatusBox() {
 
   // Fetch / from server
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/getCurrentStatus")
+    fetch(BACKEND_URL + "/getCurrentStatus")
       .then((response) => response.json())
       .then((responseText) => {
         setCrowdResponse("Last Updated: " + responseText.time + " – " + responseText.msg);

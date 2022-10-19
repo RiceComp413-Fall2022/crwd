@@ -10,10 +10,10 @@ function StatusBox() {
 
   // Fetch / from server
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/getCurrentCrowd")
-      .then((response) => response.text())
+    fetch("http://127.0.0.1:5000/getCurrentStatus")
+      .then((response) => response.json())
       .then((responseText) => {
-        setCrowdResponse(responseText);
+        setCrowdResponse("Last Updated: " + responseText.time + " – " + responseText.msg);
       });
   }, [])
 

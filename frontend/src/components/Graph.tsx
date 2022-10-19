@@ -19,7 +19,7 @@ function Graph() {
 
   // Fetch /getData from server
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/getCrowd")
+    fetch("http://127.0.0.1:5000/getAllData")
     .then((response) => response.json())
     .then((response) => {
       setChausData(response);

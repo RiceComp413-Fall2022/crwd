@@ -35,4 +35,5 @@ date = datetime.date.today()
 opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
 service_obj = Service(opening_time)
 
-app.run()
+if __name__ == '__main__':
+    app.run()

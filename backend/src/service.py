@@ -56,6 +56,6 @@ class Service:
 
     def update_total_devices(self, num_devices) -> None:
         time = datetime.now()
-        pair = (time.strftime("%d/%m/%Y %H:%M"), int(num_devices))
+        pair = (time.strftime("%m/%d/%Y %H:%M"), int(num_devices))
         self.data.append(pair)
         return

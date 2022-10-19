@@ -41,6 +41,8 @@ python3 -m unittest discover ./test
 python3 server.py
 ```
 
+The backend is deployed via heroku with: `git subtree push --prefix backend heroku main`
+
 ## Sensor (Python Script)
 
 ## Convenience Scripts

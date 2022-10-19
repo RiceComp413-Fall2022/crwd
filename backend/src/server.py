@@ -31,13 +31,8 @@ def get_crowd_route():
     return service_obj.get_crowd()
 
 
-def run_server():
-    global service_obj
-    date = datetime.date.today()
-    opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
-    service_obj = Service(opening_time)
-    app.run()
+date = datetime.date.today()
+opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
+service_obj = Service(opening_time)
 
-
-if __name__ == '__main__':
-    run_server()
+app.run()

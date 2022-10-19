@@ -1,9 +1,10 @@
 from tokenize import String
 from typing import List, Dict, Tuple
-import dummy_data
 import pandas as pd
 from datetime import datetime
 import math
+
+from src import dummy_data
 
 class Service:
     def __init__(self, opening_time: datetime):

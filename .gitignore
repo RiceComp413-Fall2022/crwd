@@ -5,6 +5,8 @@ build/
 # Backend (Python)
 *.pyc
 .env
+backup.csv
+test-backup.csv
 
 # Mac File
 .DS_Store

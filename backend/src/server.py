@@ -4,8 +4,11 @@ from flask_cors import CORS
 import datetime
 
 from src.service import Service
-# from main import app
 
+
+BACKUP_CSV_PATH = './backup.csv'
+
+# Create app instance
 app = Flask(__name__)
 
  # Allow Cross-Origin Resource Sharing
@@ -15,7 +18,8 @@ CORS(app)
 # Create Service instance
 date = datetime.date.today()
 opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
-service_obj = Service(opening_time)
+service_obj = Service(opening_time, BACKUP_CSV_PATH)
+service_obj.restore_from_csv()  # Restore from backup
 
 
 @app.route('/getDummyData')

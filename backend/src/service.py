@@ -6,10 +6,12 @@ import math
 from src import dummy_data
 
 class Service:
-    def __init__(self, opening_time: datetime):
+
+    def __init__(self, opening_time: datetime, backup_csv_path: str):
         self.capacity = 102
         self.opening_time = opening_time
-        self.data = []
+        self.data: List[Tuple[str, int]] = []
+        self.backup_csv_path = backup_csv_path
 
 
     def get_dummy_data(self) -> List[Tuple[str, int]]:
@@ -55,8 +57,30 @@ class Service:
         return {'msg': message, 'perc': perc, 'time': time}
 
 
-    def update_total_devices(self, num_devices) -> None:
-        time = datetime.now()
-        pair = (time.strftime("%m/%d/%Y %H:%M"), int(num_devices))
+    def update_total_devices(self, num_devices: int) -> None:
+        time = datetime.now().strftime("%m/%d/%Y %H:%M")
+        pair = (time, int(num_devices))
         self.data.append(pair)
+        self.backup_to_csv(time, num_devices)
         return
+
+
+    def backup_to_csv(self, time: str, count: int) -> None:
+        '''Append one value to a local CSV file'''
+        print(f"Backing up ({time}, {count}) to csv")
+        dataframe = pd.DataFrame([(time, count)])
+        print(dataframe)
+        dataframe.to_csv(self.backup_csv_path, mode='a', index=False, header=False)
+
+
+    def restore_from_csv(self) -> None:
+        '''Restore the contents of self.data to a local CSV file'''
+        print("Restoring data from csv")
+        try:
+            dataframe = pd.read_csv(self.backup_csv_path, header=None)
+        except FileNotFoundError:
+            print("Warning: No backup file found.")
+            return
+
+        data_list = list(dataframe.itertuples(index=False, name=None))
+        self.data = data_list

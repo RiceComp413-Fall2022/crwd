@@ -1,14 +1,22 @@
 from typing import List, Dict, Tuple
 from flask import Flask
 from flask_cors import CORS
-from service import Service
 import datetime
+
+from src.service import Service
 # from main import app
 
 app = Flask(__name__)
 
  # Allow Cross-Origin Resource Sharing
 CORS(app)
+
+
+# Create Service instance
+date = datetime.date.today()
+opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
+service_obj = Service(opening_time)
+
 
 @app.route('/getDummyData')
 def get_data_route() -> List[Tuple[str, int]]:
@@ -35,9 +43,5 @@ def update_total_devices_route(numDevices):
     service_obj.update_total_devices(numDevices)
     return 'update succeeded'
 
-
 if __name__ == '__main__':
-    date = datetime.date.today()
-    opening_time = datetime.datetime(date.year, date.month, date.day, 8, 0, 0)
-    service_obj = Service(opening_time)
     app.run()

@@ -3,8 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 import datetime
 
-from src.service import Service
-
+from service import Service
 
 BACKUP_CSV_PATH = './backup.csv'
 
@@ -42,10 +41,15 @@ def get_all_data_route() -> Dict:
     return service_obj.get_all_data()
 
 
-@app.route('/updateTotalDevices/<numDevices>')
-def update_total_devices_route(numDevices):
-    service_obj.update_total_devices(numDevices)
+@app.route('/updateTotalDevicesCompromised/<numDevices>')
+def comp_update_total_devices_route(numDevices) -> str:
+    service_obj.update_total_devices_comp(numDevices)
     return 'update succeeded'
+
+@app.route('/updateTotalDevices/<numDevices>/<passkey>')
+def update_total_devices_route(numDevices, passkey) -> str:
+    status = service_obj.update_total_devices(numDevices, passkey)
+    return status
 
 if __name__ == '__main__':
     app.run()

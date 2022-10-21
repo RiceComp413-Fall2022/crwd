@@ -2,8 +2,10 @@ from typing import List, Dict, Tuple
 import pandas as pd
 from datetime import datetime
 import math
+import os
+from dotenv import load_dotenv
 
-from src import dummy_data
+import dummy_data
 
 class Service:
 
@@ -12,6 +14,7 @@ class Service:
         self.opening_time = opening_time
         self.data: List[Tuple[str, int]] = []
         self.backup_csv_path = backup_csv_path
+        load_dotenv()
 
 
     def get_dummy_data(self) -> List[Tuple[str, int]]:
@@ -57,12 +60,21 @@ class Service:
         return {'msg': message, 'perc': perc, 'time': time}
 
 
-    def update_total_devices(self, num_devices: int) -> None:
+    def update_total_devices_comp(self, num_devices: int) -> None:
         time = datetime.now().strftime("%m/%d/%Y %H:%M")
         pair = (time, int(num_devices))
         self.data.append(pair)
         self.backup_to_csv(time, num_devices)
         return
+    
+    def update_total_devices(self, num_devices: int, passkey: str) -> None:
+        if passkey != os.getenv('PASSKEY'):
+            return 'update failed'
+        time = datetime.now().strftime("%m/%d/%Y %H:%M")
+        pair = (time, int(num_devices))
+        self.data.append(pair)
+        self.backup_to_csv(time, num_devices)
+        return 'update succeeded'
 
 
     def backup_to_csv(self, time: str, count: int) -> None:

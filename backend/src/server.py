@@ -3,7 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 import datetime
 
-from service import Service
+from src.service import Service
 
 BACKUP_CSV_PATH = './backup.csv'
 

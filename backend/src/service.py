@@ -5,7 +5,7 @@ import math
 import os
 from dotenv import load_dotenv
 
-import dummy_data
+from src import dummy_data
 
 class Service:
 

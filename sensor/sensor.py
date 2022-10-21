@@ -3,19 +3,17 @@ This file is adapted from https://github.com/schollz/howmanypeoplearearound
 '''
 
 import os
-import subprocess
 import click
+from dotenv import load_dotenv
 
 from howmanypeoplearearound.scan import run_scan
 from howmanypeoplearearound.chooseadapter import choose_adapter
 
 from util.monitor_mode import enable_monitor_mode
-
-from crwd.reportndevices import report_n_devices
-
+from crwd.reportndevices import report_n_devices, check_backend_connection
 
 TEST_SCAN_SECONDS = 1
-
+BACKEND_PASSWORD_VAR_NAME = 'PASSKEY'
 
 @click.command()
 @click.option('-a', '--adapter', default='', help='adapter to use')
@@ -38,22 +36,36 @@ def main(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, out,
         print("Please run as root (to enable switching adapter to monitor mode).")
         return
     
-    # Choose adapter
+    # Load a .env file
+    load_dotenv()
+
+    # Load backend password
+    BACKEND_PASSWORD = os.getenv(BACKEND_PASSWORD_VAR_NAME)
+    if BACKEND_PASSWORD is None:
+        print(f'Warning: no value for {BACKEND_PASSWORD_VAR_NAME} set in environment. Exiting.')
+        return
+    
+    # Check backend connection
+    if(not check_backend_connection()):
+        print('Unable to connect to backend. Exiting.')
+        return
+    
+    # Choose wifi adapter
     if len(adapter) == 0:
         adapter = choose_adapter()
     
     enable_monitor_mode(adapter)
 
-    # Test run
+    # Test scan
     print(f"Running test scan.")
     num_people = run_scan(adapter, str(TEST_SCAN_SECONDS), verbose, dictionary, number,
             nearby, jsonprint, out, allmacaddresses, manufacturers, nocorrection, True, sort, targetmacs, pcap)
     if num_people == -1:
         print("Test scan failed. Double-check wifi adapter is in monitor mode. Exiting.")
         return
-    else:
-        print(f"Test scan succeeded. The selected wifi adapter appears to be in monitor mode.")
-        print()
+
+    # All checks passed
+    print('\n============== ALL CHECKS PASSED. STARTING SCAN. ==============\n')
 
     # Loop forever
     while True:
@@ -67,7 +79,7 @@ def main(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, out,
             enable_monitor_mode(adapter)
         
         # Report to backend
-        report_n_devices(num_people)
+        report_n_devices(num_people, BACKEND_PASSWORD)
 
         print()
 

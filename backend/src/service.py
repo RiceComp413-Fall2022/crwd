@@ -67,7 +67,7 @@ class Service:
         self.backup_to_csv(time, num_devices)
         return
     
-    def update_total_devices(self, num_devices: int, passkey: str) -> None:
+    def update_total_devices(self, num_devices: int, passkey: str) -> str:
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'
         time = datetime.now().strftime("%m/%d/%Y %H:%M")

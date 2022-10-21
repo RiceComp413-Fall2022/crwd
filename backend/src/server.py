@@ -46,10 +46,12 @@ def comp_update_total_devices_route(numDevices) -> str:
     service_obj.update_total_devices_comp(numDevices)
     return 'update succeeded'
 
+
 @app.route('/updateTotalDevices/<numDevices>/<passkey>')
 def update_total_devices_route(numDevices, passkey) -> str:
     status = service_obj.update_total_devices(numDevices, passkey)
     return status
+
 
 if __name__ == '__main__':
     app.run()

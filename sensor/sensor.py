@@ -4,6 +4,7 @@ This file is adapted from https://github.com/schollz/howmanypeoplearearound
 
 import os
 import click
+import time
 from dotenv import load_dotenv
 
 from howmanypeoplearearound.scan import run_scan
@@ -17,8 +18,8 @@ BACKEND_PASSWORD_VAR_NAME = 'PASSKEY'
 
 @click.command()
 @click.option('-a', '--adapter', default='', help='adapter to use')
-@click.option('-s', '--scantime', default='30', help='time in seconds to scan')
-@click.option('-o', '--out', default='log.json', help='output cellphone data to file')
+@click.option('-s', '--scantime', default='180', help='time in seconds to scan')
+@click.option('-o', '--out', default='', help='output cellphone data to file')
 @click.option('-d', '--dictionary', default='oui.txt', help='OUI dictionary')
 @click.option('-v', '--verbose', help='verbose mode', is_flag=True)
 @click.option('--number', help='just print the number', is_flag=True)
@@ -46,9 +47,9 @@ def main(adapter, scantime, verbose, dictionary, number, nearby, jsonprint, out,
         return
     
     # Check backend connection
-    if(not check_backend_connection()):
-        print('Unable to connect to backend. Exiting.')
-        return
+    while(not check_backend_connection()):
+        print('Unable to connect to backend. Will check again in 60 seconds.')
+        time.sleep(60)
     
     # Choose wifi adapter
     if len(adapter) == 0:

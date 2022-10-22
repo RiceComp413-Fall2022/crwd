@@ -1,4 +1,4 @@
 click
 netifaces
 pick
-dotenv
+python-dotenv

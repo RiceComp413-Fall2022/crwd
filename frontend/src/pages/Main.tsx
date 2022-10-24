@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import StatusBox from '../components/StatusBox';
 import Graph from '../components/Graph';
-import { Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 import './Main.css';
 
@@ -10,17 +10,17 @@ function Main() {
   return (
     <div className="main">
       
-      <Row>
-        <h1 className="title">crwd.io</h1>
-      </Row>
+      <Container>
+        <h1 className="title">crwd</h1>
+      </Container>
 
-      <Row>
+      <Container>
         <StatusBox/>
-      </Row>
+      </Container>
 
-      <Row>
+      <Container>
         <Graph/>
-      </Row>
+      </Container>
 
     </div>
   );

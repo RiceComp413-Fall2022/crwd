@@ -64,15 +64,23 @@ function Graph() {
       yAxis: {
         min: 0,
         max: 100,
-        title: {
-          display: true,
-          text: '% capacity',
-          font: {
-            size: 20
-          }
-        },
         grid: {
           display: false
+        },
+        ticks: {
+          min: 0,
+          max: 100,
+          stepSize: 100,
+          suggestedMin: 0,
+          suggestedMax: 100,
+          callback: function(label: string | number) {
+              switch (label) {
+                  case 0:
+                      return 'Empty';
+                  case 100:
+                      return 'Full';
+              }
+          }
         }
       }
     },
@@ -83,7 +91,7 @@ function Graph() {
       line: {
         tension: 0.4 // how straight (0) or curvy the line is
       }
-    }
+    },
   };
 
   /*const labels = ['8:00', '9:00', '10:00'];*/

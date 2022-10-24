@@ -10,6 +10,8 @@ class Service:
 
     CHAUS_CAPACITY = 102
 
+    STORED_DATE_FORMAT = '%m/%d/%Y %H:%M'
+
     def __init__(self, 
                  opening_time: datetime, 
                  backup_csv_path: str, 
@@ -56,9 +58,14 @@ class Service:
         if len(self.data) == 0:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
-        current_crowd = self.data[-1][1]
-        perc = current_crowd / self.CHAUS_CAPACITY * 100
-        time = self.data[len(self.data) - 1][0]
+        # Get last value
+        formatted_time, count = self.data[-1]
+
+        # Reformat time as AM/PM
+        time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
+        formatted_time = time.strftime('%-I:%M %p on %m/%d/%Y')
+
+        perc = round(count / self.CHAUS_CAPACITY * 100, 1)
         if perc > 90:
             message = 'Chaus is super busy!'
         elif perc > 60:
@@ -68,11 +75,11 @@ class Service:
         else:
             message = 'Chaus is empty!'
 
-        return {'msg': message, 'perc': perc, 'time': time}
+        return {'msg': message, 'perc': perc, 'time': formatted_time}
 
 
     def update_total_devices_comp(self, num_devices: int) -> None:
-        time = datetime.now().strftime("%m/%d/%Y %H:%M")
+        time = datetime.now().strftime(self.STORED_DATE_FORMAT)
         pair = (time, int(num_devices))
         self.data.append(pair)
         self.backup_to_csv(time, num_devices)
@@ -82,7 +89,7 @@ class Service:
     def update_total_devices(self, num_devices: int, passkey: str) -> str:
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'
-        time = datetime.now(self.timezone).strftime("%m/%d/%Y %H:%M")
+        time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
         pair = (time, int(num_devices))
         self.data.append(pair)
         self.backup_to_csv(time, num_devices)

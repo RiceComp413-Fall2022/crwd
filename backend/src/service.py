@@ -4,6 +4,7 @@ from datetime import tzinfo, datetime
 import math
 import os
 from io import StringIO
+import timeago
 
 from src.backup import Backup
 from src import dummy_data
@@ -62,9 +63,11 @@ class Service:
         # Get last value
         formatted_time, count = self.data[-1]
 
-        # Reformat time as AM/PM
-        time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
-        formatted_time = time.strftime('%-I:%M %p on %m/%d/%Y')
+        # Convert time to "time ago" (e.g. "3 minutes ago")
+        last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
+        # Remove timezone info for comparison (required by timeago)
+        current_time = datetime.now(self.timezone).replace(tzinfo=None)
+        time_ago_message = timeago.format(last_update_time, current_time)
 
         perc = round(count / self.CHAUS_CAPACITY * 100, 1)
         if perc > 90:
@@ -76,7 +79,7 @@ class Service:
         else:
             message = 'Chaus is empty!'
 
-        return {'msg': message, 'perc': perc, 'time': formatted_time}
+        return {'msg': message, 'perc': perc, 'time': time_ago_message}
 
 
     def update_total_devices_comp(self, num_devices: int) -> None:

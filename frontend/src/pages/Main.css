@@ -2,8 +2,25 @@
   background-color: #F4F1DE;
   min-height: 100vh;
   padding-top: 4vh;
-  padding-left: 15%;
-  padding-right: 15%;
+  padding-left: 8%;
+  padding-right: 8%;
+}
+
+.mainRow {
+  margin-bottom: 4vh;
+}
+
+/* Mobile: less padding */
+@media (max-width: 600px) {
+  .main {
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-top: 1vh;
+  }
+
+  .mainRow {
+    margin-bottom: 1.5vh;
+  }
 }
 
 .title {
@@ -11,8 +28,4 @@
   font-weight: bolder;
   color: #E07A5F;
   font-size: calc(5vh + 2rem);
-}
-
-.container {
-  padding-bottom: 2vh;
 }

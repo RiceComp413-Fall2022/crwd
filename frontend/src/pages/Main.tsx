@@ -10,17 +10,17 @@ function Main() {
   return (
     <div className="main">
       
-      <Container>
+      <div className="mainRow">
         <h1 className="title">crwd</h1>
-      </Container>
+      </div>
 
-      <Container>
-        <StatusBox/>
-      </Container>
+      <div className="mainRow">
+        <StatusBox />
+      </div>
 
-      <Container>
+      <div className="mainRow">
         <Graph/>
-      </Container>
+      </div>
 
     </div>
   );

@@ -31,7 +31,9 @@ function StatusBox() {
       <Col sm={true}>
         <Card className="textBox">
           <Card.Body>
-            {status.msg} <br></br> ({Math.round(status.perc)}% full)
+            chaus is 
+            <br></br>
+            <h5><b>{Math.round(status.perc)}% full</b></h5>
           </Card.Body>
         </Card>
       </Col>
@@ -39,7 +41,10 @@ function StatusBox() {
       <Col sm={true}>
         <Card className="textBox">
           <Card.Body>
-            Last Updated: <br></br> {status.time}
+            last updated
+            <br></br>
+            <h5><b>{status.time}</b></h5>
+            {/* <b>{status.time}</b> */}
           </Card.Body>
         </Card>
       </Col>

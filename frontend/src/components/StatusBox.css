@@ -9,6 +9,11 @@
   margin-bottom: 2vh;
 }
 
-.card-body {
-  padding: 1.5vh !important;
+
+/* Desktop: more padding */
+@media (min-width: 600px) {
+  .card-body {
+    padding-top: 4vh !important;
+    padding-bottom: 4vh !important;
+  }
 }

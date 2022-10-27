@@ -4,7 +4,7 @@
 function backend {
   echo "===========[Running backend]==========="
   cd backend
-  python3 server.py
+  python3 app.py
 }
 
 # Run frontend

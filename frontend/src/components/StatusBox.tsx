@@ -16,6 +16,7 @@ function StatusBox() {
 
   // Store server response
   const [status, setStatus] = useState({msg: 'N/A', perc: 0, time: 'N/A'});
+  const [chausOpen, setChausOpen] = useState("N/A");
 
   // Fetch / from server
   useEffect(() => {
@@ -26,20 +27,30 @@ function StatusBox() {
       });
   }, [])
 
+  useEffect(() => {
+    fetch(BACKEND_URL + "/isChausOpen")
+      .then((response) => response.text())
+      .then((chausOpen) => {
+        setChausOpen(chausOpen)
+    });
+  }, [])
+
+  const isChausOpen = chausOpen.toLowerCase() === "true";
+
   return (
     <Row>
       <Col sm={true}>
-        <Card className="textBox">
+        <Card className={isChausOpen ? "textBox open" : "textBox closed"}>
           <Card.Body>
-            <h5><b>{status.msg}</b></h5>
+            <h5><b>{isChausOpen ? status.msg : "Chaus is CLOSED!"}</b></h5>
           </Card.Body>
         </Card>
       </Col>
       
       <Col sm={true}>
-        <Card className="textBox">
+        <Card className={isChausOpen ? "textBox open" : "textBox closed"}>
           <Card.Body>
-            <h5><b>Updated {status.time}</b></h5>
+            <h5><b> {isChausOpen ? "Updated " + status.time : "Chaus will be open at _______"}</b></h5>
           </Card.Body>
         </Card>
       </Col>

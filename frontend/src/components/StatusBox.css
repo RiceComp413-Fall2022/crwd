@@ -1,5 +1,5 @@
 .textBox {
-  background-color: #81B29A !important;
+  /* background-color: #81B29A !important; */
   border-radius: 20px !important;
   color: white;
   font-weight: bolder;
@@ -7,6 +7,21 @@
   padding-top: 1vh;
   padding-bottom: 1vh;
   margin-bottom: 2vh;
+}
+
+.open {
+  background-color: #81B29A !important;
+}
+
+.closed {
+  background-color: #C41E3A !important;
+  /* border-radius: 20px !important;
+  color: white;
+  font-weight: bolder;
+  text-align: center;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  margin-bottom: 2vh; */
 }
 
 

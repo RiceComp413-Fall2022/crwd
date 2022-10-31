@@ -8,8 +8,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import 'chartjs-adapter-date-fns';
 
 import './Graph.css'
 import { BACKEND_URL } from '../Constants';
@@ -17,6 +19,8 @@ import { BACKEND_URL } from '../Constants';
 function Graph() {
   // Store server response
   const [chausData, setChausData] = useState({});
+
+  const SERVER_TIME_FORMAT = 'MM/dd/yyyy HH:mm';
 
   // Fetch /getData from server
   useEffect(() => {
@@ -34,7 +38,8 @@ function Graph() {
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    TimeScale
   );
 
   const chartOptions = {
@@ -43,6 +48,7 @@ function Graph() {
     backgroundColor: 'white',
     maintainAspectRatio: false,
     height: '100%',
+    
     plugins: {
       legend: {
         display: false,
@@ -53,12 +59,13 @@ function Graph() {
     },
     scales: {
       xAxis: {
-        ticks: {
-          autoSkip: true,
-          maxTicksLimit: 8
-        },
         grid: {
           display: false
+        },
+        // As const for type-checking
+        type: 'time' as const,
+        time: {
+          parser: SERVER_TIME_FORMAT,
         }
       },
       yAxis: {
@@ -93,8 +100,6 @@ function Graph() {
       }
     },
   };
-
-  /*const labels = ['8:00', '9:00', '10:00'];*/
 
   const data = {
     /*labels,*/

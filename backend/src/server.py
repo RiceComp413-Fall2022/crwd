@@ -69,6 +69,15 @@ def get_all_data_route() -> Dict:
     return service_obj.get_all_data()
 
 
+@app.route('/isChausOpen')
+def is_chaus_open_route() -> bool:
+    return service_obj.chaus_is_open()
+
+@app.route('/getDailyData')
+def get_daily_data_route() -> Dict:
+    return service_obj.get_daily_data()
+
+
 # TODO: remove this endpoint. For development / testing only.
 @app.route('/updateTotalDevices/<numDevices>')
 def comp_update_total_devices_route(numDevices) -> str:

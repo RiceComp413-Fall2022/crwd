@@ -8,6 +8,7 @@ import timeago
 
 from src.backup import Backup
 from src import dummy_data
+from src import config
 
 class Service:
 
@@ -43,13 +44,36 @@ class Service:
 
     def get_all_data(self) -> Dict[str, float]:
         '''
-        Creates a list of percentages of how busy Chaus was at every minute from opening to now.
+        Creates a list of percentages of how busy Chaus was at every minute.
         '''
         datetime_to_perc = { 
             date: round(count / self.CHAUS_CAPACITY * 100, 1) 
             for date, count in self.data
         }
         return datetime_to_perc
+    
+    def get_daily_data(self) -> Dict[str, float]:
+        '''
+        Creates a list of percentages of how busy Chaus was at every minute from opening to now.
+        '''
+        today = datetime.now()
+        opening = config.oper_hours[today.weekday()][0]
+        closing = config.oper_hours[today.weekday()][1]
+        datetime_to_perc = {}
+        for date, count in self.data:
+            formatted = datetime.strptime(date, '%m/%d/%Y %H:%M')
+            if formatted.date() == today.date():
+                if formatted.time() >= opening.time() and formatted.time() <= closing.time():
+                    datetime_to_perc[date] = round(count / self.CHAUS_CAPACITY * 100, 1)
+        return datetime_to_perc
+
+    def chaus_is_open(self) -> bool:
+        today = datetime.now()
+        opening = config.oper_hours[today.weekday()][0]
+        closing = config.oper_hours[today.weekday()][1]
+        if today.time() >= opening.time() and today.time() <= closing.time():
+            return 'true'
+        return 'false'
 
 
     def get_curr_status(self) -> Dict[str, Any]:

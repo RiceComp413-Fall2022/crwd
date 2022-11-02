@@ -70,7 +70,7 @@ def get_all_data_route() -> Dict:
 
 
 @app.route('/isChausOpen')
-def is_chaus_open_route() -> bool:
+def is_chaus_open_route() -> str:
     return service_obj.chaus_is_open()
 
 @app.route('/getDailyData')

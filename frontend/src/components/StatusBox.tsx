@@ -16,7 +16,7 @@ function StatusBox() {
 
   // Store server response
   const [status, setStatus] = useState({msg: 'N/A', perc: 0, time: 'N/A'});
-  const [chausOpen, setChausOpen] = useState("N/A");
+  const [isChausOpen, setIsChausOpen] = useState(true);
 
   // Fetch / from server
   useEffect(() => {
@@ -31,11 +31,9 @@ function StatusBox() {
     fetch(BACKEND_URL + "/isChausOpen")
       .then((response) => response.text())
       .then((chausOpen) => {
-        setChausOpen(chausOpen)
+        setIsChausOpen(chausOpen != 'false') // Assume open if any value other than false is returned
     });
   }, [])
-
-  const isChausOpen = chausOpen.toLowerCase() === "true";
 
   return (
     <Row>

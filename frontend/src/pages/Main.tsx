@@ -10,7 +10,7 @@ function Main() {
     <div className="main">
       
       <div className="mainRow">
-        <h1 className="title">crwd</h1>
+        <h1 className="title">crwd.</h1>
       </div>
 
       <div className="mainRow">

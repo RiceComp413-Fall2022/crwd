@@ -24,7 +24,7 @@ function Graph() {
 
   // Fetch /getData from server
   useEffect(() => {
-    fetch(BACKEND_URL + "/getAllData")
+    fetch(BACKEND_URL + "/getDailyData")
     .then((response) => response.json())
     .then((response) => {
       setChausData(response);

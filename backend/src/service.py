@@ -66,8 +66,9 @@ class Service:
                     datetime_to_perc[date] = round(count / config.MAX_CAPACITY * 100, 1)
         return datetime_to_perc
 
+
     def chaus_is_open(self) -> str:
-        today = datetime.now()
+        today = datetime.now(self.timezone)
         opening = config.OPEN_HOURS[today.weekday()][0]
         closing = config.OPEN_HOURS[today.weekday()][1]
         if today.time() >= opening.time() and today.time() <= closing.time():

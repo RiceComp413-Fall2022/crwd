@@ -73,6 +73,7 @@ def get_all_data_route() -> Dict:
 def is_chaus_open_route() -> str:
     return service_obj.chaus_is_open()
 
+
 @app.route('/getDailyData')
 def get_daily_data_route() -> Dict:
     return service_obj.get_daily_data()

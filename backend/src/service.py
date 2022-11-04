@@ -106,14 +106,6 @@ class Service:
         return {'msg': message, 'perc': perc, 'time': time_ago_message, 'color': color}
 
 
-    def update_total_devices_comp(self, num_devices: int) -> None:
-        time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
-        pair = (time, int(num_devices))
-        self.data.append(pair)
-        self.save_to_backup()
-        return
-    
-
     def update_total_devices(self, num_devices: int, passkey: str) -> str:
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'

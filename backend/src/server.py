@@ -79,13 +79,6 @@ def get_daily_data_route() -> Dict:
     return service_obj.get_daily_data()
 
 
-# TODO: remove this endpoint. For development / testing only.
-@app.route('/updateTotalDevices/<numDevices>')
-def comp_update_total_devices_route(numDevices) -> str:
-    service_obj.update_total_devices_comp(numDevices)
-    return 'update succeeded'
-
-
 @app.route('/updateTotalDevices/<numDevices>/<passkey>')
 def update_total_devices_route(numDevices, passkey) -> str:
     status = service_obj.update_total_devices(numDevices, passkey)

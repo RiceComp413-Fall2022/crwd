@@ -14,6 +14,7 @@ https://docs.google.com/document/d/1umKnb4pe47abechjmZ10AYvQPR0TGF1hE9PGJhB-iZY/
 
 # Usage
 
+
 ## Frontend (React App)
 
 ```bash
@@ -43,9 +44,15 @@ python3 app.py
 
 The backend is deployed via heroku with: `git subtree push --prefix backend heroku main`
 
-## Sensor (Python Script)
 
-## Convenience Scripts
+## Read IT Data (Python Script)
 
-1. `./RunApp` will run both the frontend and the backend.
-2. `./TestApp` will test both the frontend and the backend.
+This script reads data from the GitLab provided by IT and updates the backend with new data.
+
+```bash
+# Setup
+pip3 install -r requirements.txt
+
+# Run
+python3 read_IT_data.py
+```

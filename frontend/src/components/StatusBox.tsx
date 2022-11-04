@@ -48,7 +48,7 @@ function StatusBox() {
       <Col sm={true}>
         <Card className={isChausOpen ? "textBox open" : "textBox closed"}>
           <Card.Body>
-            <h5><b> {isChausOpen ? "Updated " + status.time : "Chaus will be open at _______"}</b></h5>
+            <h5><b>Updated {status.time}</b></h5>
           </Card.Body>
         </Card>
       </Col>

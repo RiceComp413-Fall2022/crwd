@@ -55,7 +55,7 @@ class Service:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
-        today = datetime.now()
+        today = datetime.now(self.timezone)
         opening = config.OPEN_HOURS[today.weekday()][0]
         closing = config.OPEN_HOURS[today.weekday()][1]
         datetime_to_perc = {}
@@ -107,7 +107,7 @@ class Service:
 
 
     def update_total_devices_comp(self, num_devices: int) -> None:
-        time = datetime.now().strftime(self.STORED_DATE_FORMAT)
+        time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
         pair = (time, int(num_devices))
         self.data.append(pair)
         self.save_to_backup()

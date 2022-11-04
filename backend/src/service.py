@@ -93,17 +93,17 @@ class Service:
         current_time = datetime.now(self.timezone).replace(tzinfo=None)
         time_ago_message = timeago.format(last_update_time, current_time)
 
-        perc = round(count / config.MAX_CAPACITY * 100, 1)
+        perc = int(count / config.MAX_CAPACITY * 100)
         if perc > 90:
-            message = 'Chaus is super busy!'
+            color = '#E0785F'
         elif perc > 60:
-            message = 'Chaus is busy!'
+            color = '#FCA44D'
         elif perc > 30:
-            message = 'Now is a good time to go to Chaus!'
+            color = '#FFD45E'
         else:
-            message = 'Chaus is empty!'
-
-        return {'msg': message, 'perc': perc, 'time': time_ago_message}
+            color = '#81B29A'
+        message = 'Chaus is ' + str(perc) + '% full'
+        return {'msg': message, 'perc': perc, 'time': time_ago_message, 'color': color}
 
 
     def update_total_devices_comp(self, num_devices: int) -> None:

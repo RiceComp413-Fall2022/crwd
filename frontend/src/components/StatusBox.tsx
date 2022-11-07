@@ -27,9 +27,8 @@ function StatusBox() {
     textColor: 'white'
   });
 
-  const [isChausOpen, setIsChausOpen] = useState(true);
 
-  // Fetch / from server
+  // Fetch /getCurrentStatus from server
   useEffect(() => {
     fetch(BACKEND_URL + "/getCurrentStatus")
       .then((response) => response.json())
@@ -38,13 +37,6 @@ function StatusBox() {
       });
   }, [])
 
-  useEffect(() => {
-    fetch(BACKEND_URL + "/isChausOpen")
-      .then((response) => response.text())
-      .then((chausOpen) => {
-        setIsChausOpen(chausOpen !== 'false') // Assume open if any value other than false is returned
-    });
-  }, [])
 
   return (
     <Row>

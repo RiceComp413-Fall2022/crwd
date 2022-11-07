@@ -17,7 +17,14 @@ interface Status {
 function StatusBox() {
 
   // Store server response
-  const [status, setStatus] = useState({msg: 'N/A', perc: 0, time: 'N/A', backgroundcolor: 'N/A', textcolor: 'N/A'});
+  const [status, setStatus] = useState({
+    msg: 'N/A',
+    perc: 0,
+    time: 'N/A', 
+    backgroundcolor: '#81B29A', 
+    textcolor: 'white'
+  });
+
   const [isChausOpen, setIsChausOpen] = useState(true);
 
   // Fetch / from server
@@ -33,7 +40,7 @@ function StatusBox() {
     fetch(BACKEND_URL + "/isChausOpen")
       .then((response) => response.text())
       .then((chausOpen) => {
-        setIsChausOpen(chausOpen != 'false') // Assume open if any value other than false is returned
+        setIsChausOpen(chausOpen !== 'false') // Assume open if any value other than false is returned
     });
   }, [])
 

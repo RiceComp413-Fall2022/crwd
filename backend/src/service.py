@@ -14,10 +14,10 @@ class Service:
 
     STORED_DATE_FORMAT = '%m/%d/%Y %H:%M'
 
-    def __init__(self, 
-                 opening_time: datetime, 
-                 backup: Backup, 
-                 passkey: str, 
+    def __init__(self,
+                 opening_time: datetime,
+                 backup: Backup,
+                 passkey: str,
                  timezone: Optional[tzinfo] = None):
         self.opening_time = opening_time
         self.data: List[Tuple[str, int]] = []
@@ -45,12 +45,12 @@ class Service:
         '''
         Creates a list of percentages of how busy Chaus was at every minute.
         '''
-        datetime_to_perc = { 
-            date: round(count / config.MAX_CAPACITY * 100, 1) 
+        datetime_to_perc = {
+            date: round(count / config.MAX_CAPACITY * 100, 1)
             for date, count in self.data
         }
         return datetime_to_perc
-    
+
     def get_daily_data(self) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
@@ -84,30 +84,50 @@ class Service:
         if len(self.data) == 0:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
-        # Get last value
-        formatted_time, count = self.data[-1]
+        if self.chaus_is_open() == 'true':
+            # Get last value
+            formatted_time, count = self.data[-1]
 
-        # Convert time to "time ago" (e.g. "3 minutes ago")
-        last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
-        # Remove timezone info for comparison (required by timeago)
-        current_time = datetime.now(self.timezone).replace(tzinfo=None)
-        time_ago_message = timeago.format(last_update_time, current_time)
+            # Convert time to "time ago" (e.g. "3 minutes ago")
+            last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
+            # Remove timezone info for comparison (required by timeago)
+            current_time = datetime.now(self.timezone).replace(tzinfo=None)
+            time_ago_message = timeago.format(last_update_time, current_time)
 
-        perc = int(count / config.MAX_CAPACITY * 100)
-        if perc > 90:
-            backgroundcolor = '#E0785F'
-            textcolor = 'white'
-        elif perc > 60:
-            backgroundcolor = '#FCA44D'
-            textcolor = '#741B47'
-        elif perc > 30:
-            backgroundcolor = '#FFD45E'
-            textcolor = '#073763'
+            perc = int(count / config.MAX_CAPACITY * 100)
+            if perc > 90:
+                background_color = '#322620' #bistro
+                text_color = 'white'
+            elif perc > 60:
+                background_color = '#6D4C3D' #coffee
+                text_color = 'white'
+            elif perc > 30:
+                background_color = '#A58B7A' #beaver
+                text_color = 'white'
+            else:
+                background_color = '#DCC9B6' #almond
+                text_color = 'black'
+            message1 = 'Chaus is ' + str(perc) + '% full'
+            message2 = 'Updated ' + str(time_ago_message)
         else:
-            backgroundcolor = '#81B29A'
-            textcolor = 'white'
-        message = 'Chaus is ' + str(perc) + '% full'
-        return {'msg': message, 'perc': perc, 'time': time_ago_message, 'backgroundcolor': backgroundcolor, 'textcolor': textcolor}
+            message1 = 'Chaus is closed!'
+            # get the current time
+            today = datetime.now(self.timezone)
+            opening_today = config.OPEN_HOURS[today.weekday()][0]
+            # if time is less than opening time for today, return the opening time
+            if today.time() < opening_today.time():
+                message2 = 'Chaus will open at ' + str(opening_today.time())
+            else:
+                opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
+                message2 = 'Chaus will open at ' + str(opening_tmrw.time()) + ' tomorrow'
+            color = '#C1C1C1'
+            # else, return the opening time for the next day (weekday % 6) + 1
+        return {
+            'msg1': message1,
+            'msg2': message2,
+            'backgroundColor': background_color,
+            'textColor': text_color
+        }
 
 
     def update_total_devices(self, num_devices: int, passkey: str) -> str:
@@ -118,7 +138,7 @@ class Service:
         self.data.append(pair)
         self.save_to_backup()
         return 'update succeeded'
-    
+
 
     def save_to_backup(self) -> None:
         '''Backup all data.'''

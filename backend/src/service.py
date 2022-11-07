@@ -95,15 +95,19 @@ class Service:
 
         perc = int(count / config.MAX_CAPACITY * 100)
         if perc > 90:
-            color = '#E0785F'
+            backgroundcolor = '#E0785F'
+            textcolor = 'white'
         elif perc > 60:
-            color = '#FCA44D'
+            backgroundcolor = '#FCA44D'
+            textcolor = '#741B47'
         elif perc > 30:
-            color = '#FFD45E'
+            backgroundcolor = '#FFD45E'
+            textcolor = '#073763'
         else:
-            color = '#81B29A'
+            backgroundcolor = '#81B29A'
+            textcolor = 'white'
         message = 'Chaus is ' + str(perc) + '% full'
-        return {'msg': message, 'perc': perc, 'time': time_ago_message, 'color': color}
+        return {'msg': message, 'perc': perc, 'time': time_ago_message, 'backgroundcolor': backgroundcolor, 'textcolor': textcolor}
 
 
     def update_total_devices(self, num_devices: int, passkey: str) -> str:

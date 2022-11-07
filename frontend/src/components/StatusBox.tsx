@@ -10,12 +10,14 @@ interface Status {
   msg: string;
   perc: number;
   time: string;
+  backgroundcolor: string;
+  textcolor: string
 }
 
 function StatusBox() {
 
   // Store server response
-  const [status, setStatus] = useState({msg: 'N/A', perc: 0, time: 'N/A'});
+  const [status, setStatus] = useState({msg: 'N/A', perc: 0, time: 'N/A', backgroundcolor: 'N/A', textcolor: 'N/A'});
   const [isChausOpen, setIsChausOpen] = useState(true);
 
   // Fetch / from server
@@ -38,7 +40,7 @@ function StatusBox() {
   return (
     <Row>
       <Col sm={true}>
-        <Card className={isChausOpen ? "textBox open" : "textBox closed"}>
+        <Card className={"textBox"} style={{backgroundColor: status.backgroundcolor, color: status.textcolor}}>
           <Card.Body>
             <h5><b>{isChausOpen ? status.msg : "Chaus is CLOSED!"}</b></h5>
           </Card.Body>
@@ -46,7 +48,7 @@ function StatusBox() {
       </Col>
       
       <Col sm={true}>
-        <Card className={isChausOpen ? "textBox open" : "textBox closed"}>
+        <Card className={"textBox"} style={{backgroundColor: status.backgroundcolor, color: status.textcolor}}>
           <Card.Body>
             <h5><b>Updated {status.time}</b></h5>
           </Card.Body>

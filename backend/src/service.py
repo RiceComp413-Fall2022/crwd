@@ -84,26 +84,41 @@ class Service:
         if len(self.data) == 0:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
-        # Get last value
-        formatted_time, count = self.data[-1]
+        if self.chaus_is_open() == 'true':
+            # Get last value
+            formatted_time, count = self.data[-1]
 
-        # Convert time to "time ago" (e.g. "3 minutes ago")
-        last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
-        # Remove timezone info for comparison (required by timeago)
-        current_time = datetime.now(self.timezone).replace(tzinfo=None)
-        time_ago_message = timeago.format(last_update_time, current_time)
+            # Convert time to "time ago" (e.g. "3 minutes ago")
+            last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
+            # Remove timezone info for comparison (required by timeago)
+            current_time = datetime.now(self.timezone).replace(tzinfo=None)
+            time_ago_message = timeago.format(last_update_time, current_time)
 
-        perc = int(count / config.MAX_CAPACITY * 100)
-        if perc > 90:
-            color = '#E0785F'
-        elif perc > 60:
-            color = '#FCA44D'
-        elif perc > 30:
-            color = '#FFD45E'
+            perc = int(count / config.MAX_CAPACITY * 100)
+            if perc > 90:
+                color = '#322620' #bistro
+            elif perc > 60:
+                color = '#6D4C3D' #coffee
+            elif perc > 30:
+                color = '#A58B7A' #beaver
+            else:
+                color = '#DCC9B6' #almond
+            message1 = 'Chaus is ' + str(perc) + '% full'
+            message2 = 'Updated ' + str(time_ago_message)
         else:
-            color = '#81B29A'
-        message = 'Chaus is ' + str(perc) + '% full'
-        return {'msg': message, 'perc': perc, 'time': time_ago_message, 'color': color}
+            message1 = 'Chaus is closed!'
+            # get the current time
+            today = datetime.now(self.timezone)
+            opening_today = config.OPEN_HOURS[today.weekday()][0]
+            # if time is less than opening time for today, return the opening time
+            if today.time() < opening_today.time():
+                message2 = 'Chaus will open at ' + str(opening_today.time())
+            else:
+                opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
+                message2 = 'Chaus will open at ' + str(opening_tmrw.time()) + ' tomorrow'
+            color = '#C1C1C1'
+            # else, return the opening time for the next day (weekday % 6) + 1
+        return {'msg1': message1, 'msg2': message2, 'color': color}
 
 
     def update_total_devices(self, num_devices: int, passkey: str) -> str:

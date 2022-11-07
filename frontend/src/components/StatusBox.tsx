@@ -7,22 +7,24 @@ import './StatusBox.css'
 
 // The expected data from the server's /getCurrentStatus endpoint
 interface Status {
-  msg: string;
+  msg1: string;
+  msg2: string;
   perc: number;
   time: string;
-  backgroundcolor: string;
-  textcolor: string
+  backgroundColor: string;
+  textColor: string
 }
 
 function StatusBox() {
 
   // Store server response
   const [status, setStatus] = useState({
-    msg: 'N/A',
+    msg1: 'N/A',
+    msg2: 'N/A',
     perc: 0,
     time: 'N/A', 
-    backgroundcolor: '#81B29A', 
-    textcolor: 'white'
+    backgroundColor: 'transparent',
+    textColor: 'white'
   });
 
   const [isChausOpen, setIsChausOpen] = useState(true);
@@ -47,17 +49,17 @@ function StatusBox() {
   return (
     <Row>
       <Col sm={true}>
-        <Card className={"textBox"} style={{backgroundColor: status.backgroundcolor, color: status.textcolor}}>
+        <Card className={"textBox"} style={{backgroundColor: status.backgroundColor, color: status.textColor}}>
           <Card.Body>
-            <h5><b>{isChausOpen ? status.msg : "Chaus is CLOSED!"}</b></h5>
+            <h5><b>{status.msg1}</b></h5>
           </Card.Body>
         </Card>
       </Col>
       
       <Col sm={true}>
-        <Card className={"textBox"} style={{backgroundColor: status.backgroundcolor, color: status.textcolor}}>
+        <Card className={"textBox"} style={{backgroundColor: status.backgroundColor, color: status.textColor}}>
           <Card.Body>
-            <h5><b>Updated {status.time}</b></h5>
+            <h5><b>{status.msg2}</b></h5>
           </Card.Body>
         </Card>
       </Col>

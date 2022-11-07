@@ -99,13 +99,13 @@ class Service:
                 background_color = '#322620' #bistro
                 text_color = 'white'
             elif perc > 60:
-                background_color = '#6D4C3D' #coffee
+                background_color = '#50392F' #dark liver horses
                 text_color = 'white'
             elif perc > 30:
-                background_color = '#A58B7A' #beaver
+                background_color = '#6D4C3D' #coffee
                 text_color = 'white'
             else:
-                background_color = '#DCC9B6' #almond
+                background_color = '#A58B7A' #beaver
                 text_color = 'black'
             message1 = 'Chaus is ' + str(perc) + '% full'
             message2 = 'Updated ' + str(time_ago_message)
@@ -120,7 +120,8 @@ class Service:
             else:
                 opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
                 message2 = 'Chaus will open at ' + str(opening_tmrw.time()) + ' tomorrow'
-            color = '#C1C1C1'
+            background_color = '#C1C1C1'
+            text_color = 'white'
             # else, return the opening time for the next day (weekday % 6) + 1
         return {
             'msg1': message1,

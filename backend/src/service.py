@@ -27,9 +27,7 @@ class Service:
 
 
     def get_dummy_data(self) -> List[Tuple[str, int]]:
-        '''
-        Sets the global data variable by generating dummy data.
-        '''
+        '''Returns dummy data for testing.'''
         curr_time = datetime.now()
         diff = curr_time - self.opening_time
         # calc how many minutes have passed since opening
@@ -40,16 +38,6 @@ class Service:
         people_data = dummy_data.generate_dummy_data(num_values, minutes_between_values, initial_n_devices=50)
         return people_data
 
-
-    def get_all_data(self) -> Dict[str, float]:
-        '''
-        Creates a list of percentages of how busy Chaus was at every minute.
-        '''
-        datetime_to_perc = {
-            date: round(count / config.MAX_CAPACITY * 100, 1)
-            for date, count in self.data
-        }
-        return datetime_to_perc
 
     def get_daily_data(self) -> Dict[str, float]:
         '''
@@ -67,24 +55,17 @@ class Service:
         return datetime_to_perc
 
 
-    def chaus_is_open(self) -> str:
-        today = datetime.now(self.timezone)
-        opening = config.OPEN_HOURS[today.weekday()][0]
-        closing = config.OPEN_HOURS[today.weekday()][1]
-        if today.time() >= opening.time() and today.time() <= closing.time():
-            return 'true'
-        return 'false'
-
-
     def get_curr_status(self) -> Dict[str, Any]:
-        '''
-        Returns a message that indicates how busy Chaus is at the moment.
-        '''
+        '''Returns messages indicating how busy Chaus is at the moment.'''
         # Handle no data
         if len(self.data) == 0:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
-        if self.chaus_is_open() == 'true':
+        # Default to white text
+        text_color = 'white'
+
+        if self.is_chaus_open():
+            # Chaus is open -> msg1: "Chaus is X% busy", msg2: "Updated Y ago"
             # Get last value
             formatted_time, count = self.data[-1]
 
@@ -97,32 +78,30 @@ class Service:
             perc = int(count / config.MAX_CAPACITY * 100)
             if perc > 90:
                 background_color = '#322620' #bistro
-                text_color = 'white'
             elif perc > 60:
                 background_color = '#50392F' #dark liver horses
-                text_color = 'white'
             elif perc > 30:
                 background_color = '#6D4C3D' #coffee
-                text_color = 'white'
             else:
                 background_color = '#A58B7A' #beaver
                 text_color = 'black'
-            message1 = 'Chaus is ' + str(perc) + '% full'
-            message2 = 'Updated ' + str(time_ago_message)
+            message1 = f'Chaus is {perc}% full'
+            message2 = f'Updated {time_ago_message}'
         else:
+            # Chaus is closed -> msg1: "chaus is closed!", msg2: "Chaus will open at X"
             message1 = 'Chaus is closed!'
+            # Use grey background
+            background_color = '#C1C1C1'
             # get the current time
             today = datetime.now(self.timezone)
             opening_today = config.OPEN_HOURS[today.weekday()][0]
-            # if time is less than opening time for today, return the opening time
+            # Before opening time today -> return the opening time
             if today.time() < opening_today.time():
-                message2 = 'Chaus will open at ' + str(opening_today.time())
+                message2 = f'Chaus will open at {opening_today.time()}'
             else:
+                # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
                 opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
-                message2 = 'Chaus will open at ' + str(opening_tmrw.time()) + ' tomorrow'
-            background_color = '#C1C1C1'
-            text_color = 'white'
-            # else, return the opening time for the next day (weekday % 6) + 1
+                message2 = f'Chaus will open at {opening_tmrw.time()} tomorrow'
         return {
             'msg1': message1,
             'msg2': message2,
@@ -131,7 +110,16 @@ class Service:
         }
 
 
+    def is_chaus_open(self) -> bool:
+        '''Returns true if chaus is currently open, false otherwise'''
+        today = datetime.now(self.timezone)
+        opening = config.OPEN_HOURS[today.weekday()][0]
+        closing = config.OPEN_HOURS[today.weekday()][1]
+        return today.time() >= opening.time() and today.time() <= closing.time()
+
+
     def update_total_devices(self, num_devices: int, passkey: str) -> str:
+        '''Saves an updated value for the number of devices'''
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'
         time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
@@ -142,7 +130,7 @@ class Service:
 
 
     def save_to_backup(self) -> None:
-        '''Backup all data.'''
+        '''Saves all data to a backup'''
         print(f"Backing up data.")
         dataframe = pd.DataFrame(self.data, columns=['datetime', 'count'])
         csv_string = dataframe.to_csv(index=False)
@@ -150,7 +138,7 @@ class Service:
 
 
     def restore_from_backup(self) -> None:
-        '''Restore the contents of self.data from a backup'''
+        '''Restores the contents of self.data from a backup'''
         print("Restoring data from backup.")
         try:
             backup_str = self.backup.restore()

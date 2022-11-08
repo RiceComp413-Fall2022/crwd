@@ -66,6 +66,7 @@ function Graph() {
         type: 'time' as const,
         time: {
           parser: SERVER_TIME_FORMAT,
+          unit: 'hour' as const
         }
       },
       yAxis: {
@@ -108,7 +109,7 @@ function Graph() {
         label: 'chausCrowd',
         data: chausData,
         // data: {"30/09/2022 08:48": 40.19607843137255, "30/09/2022 08:06": 49.01960784313725, "30/09/2022 08:49": 40.19607843137255, "30/09/2022 08:05": 49.01960784313725},
-        borderColor: '#7389AE',
+        borderColor: '#322620',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],

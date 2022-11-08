@@ -1,5 +1,5 @@
 .main {
-  background-color: #F4F1DE;
+  background-color: #DCC9B6;
   min-height: 100vh;
   padding-top: 4vh;
   padding-left: 8%;
@@ -26,6 +26,6 @@
 .title {
   text-align: center;
   font-weight: bolder;
-  color: #7389AE;
+  color: #322620;
   font-size: calc(5vh + 2rem);
 }

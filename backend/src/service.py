@@ -14,10 +14,10 @@ class Service:
 
     STORED_DATE_FORMAT = '%m/%d/%Y %H:%M'
 
-    def __init__(self, 
-                 opening_time: datetime, 
-                 backup: Backup, 
-                 passkey: str, 
+    def __init__(self,
+                 opening_time: datetime,
+                 backup: Backup,
+                 passkey: str,
                  timezone: Optional[tzinfo] = None):
         self.opening_time = opening_time
         self.data: List[Tuple[str, int]] = []
@@ -27,9 +27,7 @@ class Service:
 
 
     def get_dummy_data(self) -> List[Tuple[str, int]]:
-        '''
-        Sets the global data variable by generating dummy data.
-        '''
+        '''Returns dummy data for testing.'''
         curr_time = datetime.now()
         diff = curr_time - self.opening_time
         # calc how many minutes have passed since opening
@@ -41,16 +39,6 @@ class Service:
         return people_data
 
 
-    def get_all_data(self) -> Dict[str, float]:
-        '''
-        Creates a list of percentages of how busy Chaus was at every minute.
-        '''
-        datetime_to_perc = { 
-            date: round(count / config.MAX_CAPACITY * 100, 1) 
-            for date, count in self.data
-        }
-        return datetime_to_perc
-    
     def get_daily_data(self) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
@@ -63,58 +51,75 @@ class Service:
             formatted = datetime.strptime(date, '%m/%d/%Y %H:%M')
             if formatted.date() == today.date():
                 if formatted.time() >= opening.time() and formatted.time() <= closing.time():
-                    datetime_to_perc[date] = round(count / config.MAX_CAPACITY * 100, 1)
+                    datetime_to_perc[date] = min(int(count / config.MAX_CAPACITY * 100), 100)
         return datetime_to_perc
 
 
-    def chaus_is_open(self) -> str:
-        today = datetime.now(self.timezone)
-        opening = config.OPEN_HOURS[today.weekday()][0]
-        closing = config.OPEN_HOURS[today.weekday()][1]
-        if today.time() >= opening.time() and today.time() <= closing.time():
-            return 'true'
-        return 'false'
-
-
     def get_curr_status(self) -> Dict[str, Any]:
-        '''
-        Returns a message that indicates how busy Chaus is at the moment.
-        '''
+        '''Returns messages indicating how busy Chaus is at the moment.'''
         # Handle no data
         if len(self.data) == 0:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
-        # Get last value
-        formatted_time, count = self.data[-1]
+        # Default to white text
+        text_color = 'white'
 
-        # Convert time to "time ago" (e.g. "3 minutes ago")
-        last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
-        # Remove timezone info for comparison (required by timeago)
-        current_time = datetime.now(self.timezone).replace(tzinfo=None)
-        time_ago_message = timeago.format(last_update_time, current_time)
+        if self.is_chaus_open():
+            # Chaus is open -> msg1: "Chaus is X% busy", msg2: "Updated Y ago"
+            # Get last value
+            formatted_time, count = self.data[-1]
 
-        perc = round(count / config.MAX_CAPACITY * 100, 1)
-        if perc > 90:
-            message = 'Chaus is super busy!'
-        elif perc > 60:
-            message = 'Chaus is busy!'
-        elif perc > 30:
-            message = 'Now is a good time to go to Chaus!'
+            # Convert time to "time ago" (e.g. "3 minutes ago")
+            last_update_time = datetime.strptime(formatted_time, self.STORED_DATE_FORMAT)
+            # Remove timezone info for comparison (required by timeago)
+            current_time = datetime.now(self.timezone).replace(tzinfo=None)
+            time_ago_message = timeago.format(last_update_time, current_time)
+
+            perc = min(int(count / config.MAX_CAPACITY * 100), 100)
+            if perc > 90:
+                background_color = '#322620' #bistro
+            elif perc > 60:
+                background_color = '#50392F' #dark liver horses
+            elif perc > 30:
+                background_color = '#6D4C3D' #coffee
+            else:
+                background_color = '#A58B7A' #beaver
+                text_color = 'black'
+            message1 = f'Chaus is {perc}% full'
+            message2 = f'Updated {time_ago_message}'
         else:
-            message = 'Chaus is empty!'
+            # Chaus is closed -> msg1: "chaus is closed!", msg2: "Chaus will open at X"
+            message1 = 'Chaus is closed!'
+            # Use grey background
+            background_color = '#C1C1C1'
+            # get the current time
+            today = datetime.now(self.timezone)
+            opening_today = config.OPEN_HOURS[today.weekday()][0]
+            # Before opening time today -> return the opening time
+            if today.time() < opening_today.time():
+                message2 = f'Chaus will open at {opening_today.time()}'
+            else:
+                # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
+                opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
+                message2 = f'Chaus will open at {opening_tmrw.time()} tomorrow'
+        return {
+            'msg1': message1,
+            'msg2': message2,
+            'backgroundColor': background_color,
+            'textColor': text_color
+        }
 
-        return {'msg': message, 'perc': perc, 'time': time_ago_message}
 
+    def is_chaus_open(self) -> bool:
+        '''Returns true if chaus is currently open, false otherwise'''
+        today = datetime.now(self.timezone)
+        opening = config.OPEN_HOURS[today.weekday()][0]
+        closing = config.OPEN_HOURS[today.weekday()][1]
+        return today.time() >= opening.time() and today.time() <= closing.time()
 
-    def update_total_devices_comp(self, num_devices: int) -> None:
-        time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
-        pair = (time, int(num_devices))
-        self.data.append(pair)
-        self.save_to_backup()
-        return
-    
 
     def update_total_devices(self, num_devices: int, passkey: str) -> str:
+        '''Saves an updated value for the number of devices'''
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'
         time = datetime.now(self.timezone).strftime(self.STORED_DATE_FORMAT)
@@ -122,10 +127,10 @@ class Service:
         self.data.append(pair)
         self.save_to_backup()
         return 'update succeeded'
-    
+
 
     def save_to_backup(self) -> None:
-        '''Backup all data.'''
+        '''Saves all data to a backup'''
         print(f"Backing up data.")
         dataframe = pd.DataFrame(self.data, columns=['datetime', 'count'])
         csv_string = dataframe.to_csv(index=False)
@@ -133,7 +138,7 @@ class Service:
 
 
     def restore_from_backup(self) -> None:
-        '''Restore the contents of self.data from a backup'''
+        '''Restores the contents of self.data from a backup'''
         print("Restoring data from backup.")
         try:
             backup_str = self.backup.restore()

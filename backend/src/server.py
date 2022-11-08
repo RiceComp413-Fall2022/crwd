@@ -54,24 +54,9 @@ def hello() -> str:
     return 'Hello, World!'
 
 
-@app.route('/getDummyData')
-def get_data_route() -> List[Tuple[str, int]]:
-    return service_obj.get_dummy_data()
-
-
 @app.route('/getCurrentStatus')
 def get_curr_status_route():
     return service_obj.get_curr_status()
-
-
-@app.route('/getAllData')
-def get_all_data_route() -> Dict:
-    return service_obj.get_all_data()
-
-
-@app.route('/isChausOpen')
-def is_chaus_open_route() -> str:
-    return service_obj.chaus_is_open()
 
 
 @app.route('/getDailyData')
@@ -79,11 +64,9 @@ def get_daily_data_route() -> Dict:
     return service_obj.get_daily_data()
 
 
-# TODO: remove this endpoint. For development / testing only.
-@app.route('/updateTotalDevices/<numDevices>')
-def comp_update_total_devices_route(numDevices) -> str:
-    service_obj.update_total_devices_comp(numDevices)
-    return 'update succeeded'
+@app.route('/getDummyData')
+def get_data_route() -> List[Tuple[str, int]]:
+    return service_obj.get_dummy_data()
 
 
 @app.route('/updateTotalDevices/<numDevices>/<passkey>')

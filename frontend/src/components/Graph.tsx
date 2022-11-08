@@ -66,6 +66,7 @@ function Graph() {
         type: 'time' as const,
         time: {
           parser: SERVER_TIME_FORMAT,
+          unit: 'hour' as const
         }
       },
       yAxis: {

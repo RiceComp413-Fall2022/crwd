@@ -51,7 +51,7 @@ class Service:
             formatted = datetime.strptime(date, '%m/%d/%Y %H:%M')
             if formatted.date() == today.date():
                 if formatted.time() >= opening.time() and formatted.time() <= closing.time():
-                    datetime_to_perc[date] = round(count / config.MAX_CAPACITY * 100, 1)
+                    datetime_to_perc[date] = min(int(count / config.MAX_CAPACITY * 100), 100)
         return datetime_to_perc
 
 
@@ -75,7 +75,7 @@ class Service:
             current_time = datetime.now(self.timezone).replace(tzinfo=None)
             time_ago_message = timeago.format(last_update_time, current_time)
 
-            perc = int(count / config.MAX_CAPACITY * 100)
+            perc = min(int(count / config.MAX_CAPACITY * 100), 100)
             if perc > 90:
                 background_color = '#322620' #bistro
             elif perc > 60:

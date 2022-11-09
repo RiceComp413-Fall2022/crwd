@@ -12,7 +12,11 @@ from src import config
 
 class Service:
 
+    # The string format of datetimes stored in data
     STORED_DATE_FORMAT = '%m/%d/%Y %H:%M'
+
+    # The string format of times stored in predicted_data
+    STORED_TIME_FORMAT = '%H:%M'
 
     def __init__(self,
                  opening_time: datetime,
@@ -21,6 +25,7 @@ class Service:
                  timezone: Optional[tzinfo] = None):
         self.opening_time = opening_time
         self.data: List[Tuple[str, int]] = []
+        self.predicted_data: List[Tuple[str, int]] = []
         self.backup = backup
         self.passkey = passkey
         self.timezone = timezone
@@ -44,15 +49,43 @@ class Service:
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
         today = datetime.now(self.timezone)
-        opening = config.OPEN_HOURS[today.weekday()][0]
-        closing = config.OPEN_HOURS[today.weekday()][1]
+        opening, closing = config.OPEN_HOURS[today.weekday()]
         datetime_to_perc = {}
-        for date, count in self.data:
-            formatted = datetime.strptime(date, '%m/%d/%Y %H:%M')
-            if formatted.date() == today.date():
-                if formatted.time() >= opening.time() and formatted.time() <= closing.time():
-                    datetime_to_perc[date] = min(int(count / config.MAX_CAPACITY * 100), 100)
-        return datetime_to_perc
+        for date_str, count in self.data:
+            date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
+            if date.date() == today.date():
+                if date.time() >= opening.time() and date.time() <= closing.time():
+                    datetime_to_perc[date_str] = min(int(count / config.MAX_CAPACITY * 100), 100)
+        return datetime_to_perc 
+    
+
+    def get_predicted_data(self) -> Dict[str, float]:
+        '''
+        Creates a list of percentages of how busy Chaus was at every minute from now to close based on predictions.
+        '''
+        now = datetime.now(self.timezone)   # For current time
+        opening, closing = config.OPEN_HOURS[now.weekday()]
+        datetime_to_perc = {}
+
+        # Use the last observed value as first predicted value
+        today = datetime.now(self.timezone)
+        last_date_str, last_count = self.data[-1]
+        last_date = datetime.strptime(last_date_str, self.STORED_DATE_FORMAT)
+        if last_date.date() == today.date() and last_date.time() >= opening.time() and last_date.time() <= closing.time():
+            datetime_to_perc[last_date_str] = min(int(last_count / config.MAX_CAPACITY * 100), 100)
+        
+        # Use values from predicted data from now until closing
+        for time_str, count in self.predicted_data:
+            # Extract time from formatted string
+            time = datetime.strptime(time_str, self.STORED_TIME_FORMAT).time()
+            # Use (today's date) + (time from prediction)
+            prediction_datetime = now.replace(hour=time.hour, minute=time.minute, second=0)
+            # Filter for times between now and closing time
+            if time >= now.time() and time <= closing.time():
+                # Create string with today's date + time from prediction
+                prediction_datetime_str = prediction_datetime.strftime(self.STORED_DATE_FORMAT)
+                datetime_to_perc[prediction_datetime_str] = min(int(count / config.MAX_CAPACITY * 100), 100)
+        return datetime_to_perc 
 
 
     def get_curr_status(self) -> Dict[str, Any]:
@@ -127,6 +160,31 @@ class Service:
         self.data.append(pair)
         self.save_to_backup()
         return 'update succeeded'
+    
+
+    def calculate_predicted_data(self) -> None:
+        '''
+        Calculates predicted (time, count) pairs from historical data. 
+        The result is stored in self.predicted_data.
+        Note: the times are formatted such as "08:30" and do not contain dates
+        '''
+        print('Calculating predicted data.')
+        # Convert all data to dataframe
+        df = pd.DataFrame(self.data, columns=['datetime', 'count'])
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df = df.set_index('datetime')
+        # Convert time to 30-minute intervals
+        df_by_30_min = pd.DataFrame(df['count'].resample('30 min').mean())
+        # Filter for times after 6am
+        df_by_30_min = df_by_30_min.loc[df_by_30_min.index.to_series().dt.hour > 6]
+        # Extract the time from the datetime
+        df_by_30_min['time'] = df_by_30_min.index.to_series().dt.time
+        # Find the mean time per 30-minute interval
+        summary_df = df_by_30_min.groupby('time').mean()
+        # Use a string (e.g. '08:30') to represent the time
+        summary_df = summary_df.set_index(summary_df.index.to_series().astype(str).str.slice(0, 5))
+        # Convert to list of (time_string, count) pairs
+        self.predicted_data = list(summary_df.itertuples(name=None))
 
 
     def save_to_backup(self) -> None:
@@ -160,3 +218,5 @@ class Service:
         # Convert the data frame to a list
         self.data = list(dataframe.itertuples(index=False, name=None))
         print(f'Restored {len(self.data)} values from backup.')
+        # Calculate predictions from the historical data
+        self.calculate_predicted_data()

@@ -64,6 +64,11 @@ def get_daily_data_route() -> Dict:
     return service_obj.get_daily_data()
 
 
+@app.route('/getPredictedData')
+def get_predicted_data_route() -> Dict:
+    return service_obj.get_predicted_data()
+
+
 @app.route('/getDummyData')
 def get_data_route() -> List[Tuple[str, int]]:
     return service_obj.get_dummy_data()

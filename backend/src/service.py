@@ -97,11 +97,11 @@ class Service:
             opening_today = config.OPEN_HOURS[today.weekday()][0]
             # Before opening time today -> return the opening time
             if today.time() < opening_today.time():
-                message2 = f'Chaus will open at {opening_today.time()}'
+                message2 = f'Chaus will open at {opening_today.time().strftime("%-I:%M %p")}'
             else:
                 # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
                 opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
-                message2 = f'Chaus will open at {opening_tmrw.time()} tomorrow'
+                message2 = f'Chaus will open at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
         return {
             'msg1': message1,
             'msg2': message2,

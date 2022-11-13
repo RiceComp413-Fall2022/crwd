@@ -1,6 +1,6 @@
 from typing import Any, List, Dict, Optional, Tuple
 import pandas as pd
-from datetime import tzinfo, datetime
+from datetime import tzinfo, datetime, timedelta
 import math
 import os
 from io import StringIO
@@ -44,19 +44,28 @@ class Service:
         return people_data
 
 
-    def get_daily_data(self) -> Dict[str, float]:
+    def get_daily_data(self, offset) -> Dict[str, Any]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from opening to now.
         '''
         today = datetime.now(self.timezone)
-        opening, closing = config.OPEN_HOURS[today.weekday()]
+        curr_date = today + timedelta(days = int(offset))
+        opening, closing = config.OPEN_HOURS[curr_date.weekday()]
         datetime_to_perc = {}
+        prev = None
         for date_str, count in self.data:
             date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
-            if date.date() == today.date():
+            if date.date() == curr_date.date():
                 if date.time() >= opening.time() and date.time() <= closing.time():
-                    datetime_to_perc[date_str] = min(int(count / config.MAX_CAPACITY * 100), 100)
-        return datetime_to_perc 
+                    if prev:
+                        smooth = (count + prev) / 2
+                    else:
+                        smooth  = count
+                    prev = count
+                    datetime_to_perc[date_str] = min(int(smooth / config.MAX_CAPACITY * 100), 100)
+        
+        msg = curr_date.strftime('%A') + ', ' + curr_date.strftime('%B') + ' ' + str(curr_date.day)
+        return {'data' : datetime_to_perc, 'msg': msg}
     
 
     def get_predicted_data(self) -> Dict[str, float]:

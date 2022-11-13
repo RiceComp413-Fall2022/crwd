@@ -19,15 +19,25 @@ import { BACKEND_URL } from '../Constants';
 function Graph() {
   // Store server response
   const [chausData, setChausData] = useState({});
+  const [predictedData, setPredictedData] = useState({});
 
   const SERVER_TIME_FORMAT = 'MM/dd/yyyy HH:mm';
 
-  // Fetch /getData from server
+  // Fetch /getDailyData from server
   useEffect(() => {
     fetch(BACKEND_URL + "/getDailyData")
     .then((response) => response.json())
     .then((response) => {
       setChausData(response);
+    });
+  }, [])
+
+  // Fetch /getPredictedData from server
+  useEffect(() => {
+    fetch(BACKEND_URL + "/getPredictedData")
+    .then((response) => response.json())
+    .then((response) => {
+      setPredictedData(response);
     });
   }, [])
 
@@ -111,6 +121,13 @@ function Graph() {
         // data: {"30/09/2022 08:48": 40.19607843137255, "30/09/2022 08:06": 49.01960784313725, "30/09/2022 08:49": 40.19607843137255, "30/09/2022 08:05": 49.01960784313725},
         borderColor: '#322620',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: 'chausCrowdPredicted',
+        data: predictedData,
+        borderColor: '#322620',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderDash: [10,5]
       },
     ],
   };

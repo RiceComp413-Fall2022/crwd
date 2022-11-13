@@ -59,9 +59,14 @@ def get_curr_status_route():
     return service_obj.get_curr_status()
 
 
-@app.route('/getDailyData')
-def get_daily_data_route() -> Dict:
-    return service_obj.get_daily_data()
+@app.route('/getDailyData/<offset>')
+def get_daily_data_route(offset) -> Dict:
+    return service_obj.get_daily_data(offset)
+
+
+@app.route('/getPredictedData')
+def get_predicted_data_route() -> Dict:
+    return service_obj.get_predicted_data()
 
 
 @app.route('/getDummyData')

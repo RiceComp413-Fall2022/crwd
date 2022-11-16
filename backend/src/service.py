@@ -63,12 +63,14 @@ class Service:
                         smooth  = count
                     prev = count
                     datetime_to_perc[date_str] = min(int(smooth / config.MAX_CAPACITY * 100), 100)
+
+        predicted_data = self.get_predicted_data(today.weekday())
         
         msg = curr_date.strftime('%A') + ', ' + curr_date.strftime('%B') + ' ' + str(curr_date.day)
-        return {'data' : datetime_to_perc, 'msg': msg}
+        return {'historical' : datetime_to_perc, 'predicted' : predicted_data, 'msg': msg}
     
 
-    def get_predicted_data(self) -> Dict[str, float]:
+    def get_predicted_data(self, weekday) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from now to close based on predictions.
         '''
@@ -76,6 +78,8 @@ class Service:
         opening, closing = config.OPEN_HOURS[now.weekday()]
         datetime_to_perc = {}
 
+        self.calculate_predicted_data(weekday)
+        
         # Use the last observed value as first predicted value
         today = datetime.now(self.timezone)
         last_date_str, last_count = self.data[-1]
@@ -83,6 +87,7 @@ class Service:
         if last_date.date() == today.date() and last_date.time() >= opening.time() and last_date.time() <= closing.time():
             datetime_to_perc[last_date_str] = min(int(last_count / config.MAX_CAPACITY * 100), 100)
         
+
         # Use values from predicted data from now until closing
         for time_str, count in self.predicted_data:
             # Extract time from formatted string
@@ -171,7 +176,7 @@ class Service:
         return 'update succeeded'
     
 
-    def calculate_predicted_data(self) -> None:
+    def calculate_predicted_data(self, weekday) -> None:
         '''
         Calculates predicted (time, count) pairs from historical data. 
         The result is stored in self.predicted_data.
@@ -181,6 +186,11 @@ class Service:
         # Convert all data to dataframe
         df = pd.DataFrame(self.data, columns=['datetime', 'count'])
         df['datetime'] = pd.to_datetime(df['datetime'])
+        #df = df.set_index('datetime')
+        # Filter dataframe to only include data from specified day
+        df = df.set_index('datetime')
+        df = df.reset_index()
+        df = df[df['datetime'].dt.dayofweek == 0]
         df = df.set_index('datetime')
         # Convert time to 30-minute intervals
         df_by_30_min = pd.DataFrame(df['count'].resample('30 min').mean())
@@ -227,5 +237,3 @@ class Service:
         # Convert the data frame to a list
         self.data = list(dataframe.itertuples(index=False, name=None))
         print(f'Restored {len(self.data)} values from backup.')
-        # Calculate predictions from the historical data
-        self.calculate_predicted_data()

@@ -40,7 +40,7 @@ function StatusBox() {
 
   return (
     <Row>
-      <Col sm={true}>
+      <Col md={true}>
         <Card className={"textBox"} style={{backgroundColor: status.backgroundColor, color: status.textColor}}>
           <Card.Body>
             <h5><b>{status.msg1}</b></h5>
@@ -48,7 +48,7 @@ function StatusBox() {
         </Card>
       </Col>
       
-      <Col sm={true}>
+      <Col md={true}>
         <Card className={"textBox"} style={{backgroundColor: status.backgroundColor, color: status.textColor}}>
           <Card.Body>
             <h5><b>{status.msg2}</b></h5>

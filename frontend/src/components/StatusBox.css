@@ -4,13 +4,13 @@
   text-align: center;
   padding-top: 1vh;
   padding-bottom: 1vh;
-  margin-bottom: 2vh;
+  margin-bottom: 1vh;
 }
 
 /* Desktop: more padding */
 @media (min-width: 600px) {
   .card-body {
-    padding-top: 4vh !important;
-    padding-bottom: 4vh !important;
+    padding-top: 3vh !important;
+    padding-bottom: 3vh !important;
   }
 }

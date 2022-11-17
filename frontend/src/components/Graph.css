@@ -5,3 +5,15 @@
   height: 50vh;
   max-height: 50vh;
 }
+
+/* Override bootstrap button color */
+.btn {
+  color: #322620 !important;
+}
+
+.chartTitle {
+  text-align: center;
+  font-weight: bolder;
+  font-size: calc(2vh + 1.5vw);
+  color: #322620;
+}

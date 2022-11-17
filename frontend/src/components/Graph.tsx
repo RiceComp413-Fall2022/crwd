@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, Row } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,12 +16,11 @@ import 'chartjs-adapter-date-fns';
 
 import './Graph.css'
 import { BACKEND_URL } from '../Constants';
-import { setDate } from 'date-fns';
 
 function Graph() {
   // Store server response
   const [chausData, setChausData] = useState({});
-  const [currentDate, setCurrentDate] = useState("");
+  const [displayDate, setDisplayDate] = useState("");
   const [predictedData, setPredictedData] = useState({});
   const [currentOffset, setCurrentOffset] = useState(0);
 
@@ -33,19 +32,10 @@ function Graph() {
     .then((response) => response.json())
     .then((response) => {
       setChausData(response.historical);
-      setCurrentDate(response.msg);
+      setDisplayDate(response.msg);
       setPredictedData(response.predicted);
     });
   }, [currentOffset])
-
-  // Fetch /getPredictedData from server
-  // useEffect(() => {
-  //   fetch(BACKEND_URL + "/getPredictedData")
-  //   .then((response) => response.json())
-  //   .then((response) => {
-  //     setPredictedData(response);
-  //   });
-  // }, [])
 
   ChartJS.register(
     CategoryScale,
@@ -138,36 +128,34 @@ function Graph() {
     ],
   };
 
-  function LeftArrowButton() {
-    setCurrentOffset(currentOffset - 1);
-  }
-
-  function RightArrowButton() {
-    setCurrentOffset(currentOffset + 1);
-  }
-
   return (
     <>
-    <Row>   
-      <p style={{textAlign: "center", fontWeight: "bolder", fontSize: "35px"}}>{currentDate}</p>
+    <Row className="pb-4">
+      {/* Left Arrow: "<" */}
+      <Col xs={3} className="d-flex align-items-center justify-content-end">
+        <Button size="lg" variant="light" onClick={() => setCurrentOffset(currentOffset - 1)}>
+          &lt;
+        </Button>
+      </Col>
+
+      {/* Date */}
+      <Col>
+        <div className="chartTitle">
+          {displayDate}
+        </div>
+      </Col>
+
+      {/* Right Arrow: ">" */}
+      <Col xs={3} className="d-flex align-items-center justify-content-start">
+        <Button size="lg" variant="light" onClick={() => setCurrentOffset(currentOffset + 1)}>
+          &gt;
+        </Button>
+      </Col>
     </Row>
 
-    <Row>
-    <Col sm={true}>
-      <button onClick={LeftArrowButton}>
-        ⬅️
-      </button>
-    </Col>
-
-    <Col sm={true} style={{display:'flex', justifyContent:'right'}}>
-      <button onClick={RightArrowButton}>
-        ➡️
-      </button>
-    </Col>
-    </Row>
-
+    {/* Graph */}
     <Line className="graph" options={chartOptions} data={data} />
-    </>
+  </>
   );
 }
 

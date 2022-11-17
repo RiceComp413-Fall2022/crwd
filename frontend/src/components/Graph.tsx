@@ -23,6 +23,7 @@ function Graph() {
   const [displayDate, setDisplayDate] = useState("");
   const [predictedData, setPredictedData] = useState({});
   const [currentOffset, setCurrentOffset] = useState(0);
+  const [shouldAnimateChart, setShouldAnimateChart] = useState(true);
 
   const SERVER_TIME_FORMAT = 'MM/dd/yyyy HH:mm';
 
@@ -106,6 +107,8 @@ function Graph() {
         tension: 0.4 // how straight (0) or curvy the line is
       }
     },
+    // Turn animation on/off
+    animation: (shouldAnimateChart ? {} : { duration: 0 })
   };
 
   const data = {
@@ -133,7 +136,11 @@ function Graph() {
     <Row className="pb-4">
       {/* Left Arrow: "<" */}
       <Col xs={3} className="d-flex align-items-center justify-content-end">
-        <Button size="lg" variant="light" onClick={() => setCurrentOffset(currentOffset - 1)}>
+        <Button size="lg" variant="light" onClick={() => {
+          setCurrentOffset(currentOffset - 1);
+          // Don't animate after clicking button
+          setShouldAnimateChart(false)}}
+        >
           &lt;
         </Button>
       </Col>
@@ -147,7 +154,11 @@ function Graph() {
 
       {/* Right Arrow: ">" */}
       <Col xs={3} className="d-flex align-items-center justify-content-start">
-        <Button size="lg" variant="light" onClick={() => setCurrentOffset(currentOffset + 1)}>
+        <Button size="lg" variant="light" onClick={() => {
+          setCurrentOffset(currentOffset + 1);
+          // Don't animate after clicking button
+          setShouldAnimateChart(false)}}
+        >
           &gt;
         </Button>
       </Col>

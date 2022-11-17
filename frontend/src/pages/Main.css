@@ -4,10 +4,11 @@
   padding-top: 4vh;
   padding-left: 8%;
   padding-right: 8%;
+  padding-bottom: 50px;
 }
 
 .mainRow {
-  margin-bottom: 2vh;
+  margin-bottom: 3vh;
 }
 
 /* Mobile: less padding */

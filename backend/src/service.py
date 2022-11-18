@@ -158,8 +158,9 @@ class Service:
         else:
             # Chaus is closed -> msg1: "chaus is closed!", msg2: "Chaus will open at X"
             message1 = 'Chaus is closed!'
-            # Use grey background
-            background_color = '#C1C1C1'
+            # Use white background
+            background_color = 'white'
+            text_color = '#322620' # bistro
             # get the current time
             today = datetime.now(self.timezone)
             opening_today = config.OPEN_HOURS[today.weekday()][0]

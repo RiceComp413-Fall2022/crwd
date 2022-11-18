@@ -79,6 +79,13 @@ def update_total_devices_route(numDevices, passkey) -> str:
     status = service_obj.update_total_devices(numDevices, passkey)
     return status
 
+@app.route('/calculateChausCapacity')
+def calculate_chaus_capacity_route() -> int:
+    return service_obj.calculate_chaus_capacity()
+
+@app.route('/getDailyCounts/<offset>')
+def get_daily_counts_route(offset) -> Dict:
+    return service_obj.get_daily_counts(offset)
 
 if __name__ == '__main__':
     app.run()

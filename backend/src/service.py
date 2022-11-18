@@ -43,6 +43,23 @@ class Service:
         people_data = dummy_data.generate_dummy_data(num_values, minutes_between_values, initial_n_devices=50)
         return people_data
 
+    def get_daily_counts(self, offset) -> Dict[str, Any]: 
+        '''
+        A helper function for getting the capacity of Chaus
+        '''
+        today = datetime.now(self.timezone)
+        curr_date = today + timedelta(days = int(offset))
+        opening, closing = config.OPEN_HOURS[curr_date.weekday()]
+        datetime_counts = {}
+        for date_str, count in self.data:
+            date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
+            if date.date() == curr_date.date():
+                if date.time() >= opening.time() and date.time() <= closing.time():
+                    datetime_counts[date_str] = count
+
+        return {'hist_len': len(datetime_counts), 'hist_counts': datetime_counts}
+
+
 
     def get_daily_data(self, offset) -> Dict[str, Any]:
         '''
@@ -53,6 +70,8 @@ class Service:
         opening, closing = config.OPEN_HOURS[curr_date.weekday()]
         datetime_to_perc = {}
         prev = None
+        capacity_values = self.calculate_chaus_capacity()
+
         for date_str, count in self.data:
             date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
             if date.date() == curr_date.date():
@@ -62,13 +81,14 @@ class Service:
                     else:
                         smooth  = count
                     prev = count
-                    datetime_to_perc[date_str] = min(int(smooth / config.MAX_CAPACITY * 100), 100)
+
+                    datetime_to_perc[date_str] = datetime_to_perc[date_str] = min(int(smooth / (capacity_values[1] - capacity_values[0]) * 100), 100)
 
         predicted_data = self.get_predicted_data(today.weekday())
         
         msg = curr_date.strftime('%A') + ', ' + curr_date.strftime('%B') + ' ' + str(curr_date.day)
         return {'historical' : datetime_to_perc, 'predicted' : predicted_data, 'msg': msg}
-    
+
 
     def get_predicted_data(self, weekday) -> Dict[str, float]:
         '''
@@ -237,3 +257,21 @@ class Service:
         # Convert the data frame to a list
         self.data = list(dataframe.itertuples(index=False, name=None))
         print(f'Restored {len(self.data)} values from backup.')
+
+    def calculate_chaus_capacity(self) -> list:
+        total_data_points = 0
+        all_crowd_values = []
+
+        # Step 1: Get the total number of data points and the value of each point from the past week
+        for x in range(1, 8):
+            all_daily_data = self.get_daily_counts(-1 * x)
+            total_data_points += len(all_daily_data["hist_counts"])
+            for value in all_daily_data["hist_counts"].values():
+                all_crowd_values.append(value)
+
+        #Step 2: Get the 99th percentile as the max value and the 1st percentile as the min value
+        percentile1 = int(0.01 * total_data_points)
+        percentile99 = int(0.99 * total_data_points)
+        all_crowd_values.sort()
+        #return [all_crowd_values, total_data_points, percentile1, percentile99]
+        return [all_crowd_values[percentile1], all_crowd_values[percentile99]]

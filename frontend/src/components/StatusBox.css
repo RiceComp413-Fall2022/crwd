@@ -1,5 +1,6 @@
 .textBox {
   border-radius: 20px !important;
+  border-width: 0px !important;
   font-weight: bolder;
   text-align: center;
   padding-top: 1vh;

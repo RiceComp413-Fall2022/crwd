@@ -77,17 +77,18 @@ function Graph() {
         }
       },
       yAxis: {
-        min: 0,
-        // Go to 101 to avoid cutting off the curve at 100
+        // Go from -1 to 101 to avoid cutting off the boundaries
+        min: -1,
         max: 101,
         grid: {
           display: false
         },
         ticks: {
-          stepSize: 101,
+          // min: 0,
+          // stepSize: 101,
           callback: function(label: string | number) {
               switch (label) {
-                  case 0:
+                  case -1:
                       return 'Empty';
                   case 101:
                       return 'Full';

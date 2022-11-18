@@ -67,58 +67,59 @@ class Service:
         '''
         today = datetime.now(self.timezone)
         curr_date = today + timedelta(days = int(offset))
-        opening, closing = config.OPEN_HOURS[curr_date.weekday()]
         datetime_to_perc = {}
-        prev = None
-        capacity_values = self.calculate_chaus_capacity()
+        last_date = last_count = None
+        if today.date() >= curr_date.date():
+            # print('historical data')
+            opening, closing = config.OPEN_HOURS[curr_date.weekday()]
+            prev = None
+            for date_str, count in self.data:
+                date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
+                if date.date() == curr_date.date():
+                    if date.time() >= opening.time() and date.time() <= closing.time():
+                        if prev:
+                            smooth = (count + prev) / 2
+                        else:
+                            smooth = count
+                        prev = count
+                        last_date = date_str
+                        last_count = count
+                        datetime_to_perc[date_str] = min(int(smooth / config.MAX_CAPACITY * 100), 100)
+            if last_date and last_count:
+                datetime_to_perc[last_date] = min(int(last_count / config.MAX_CAPACITY * 100), 100)
 
-        for date_str, count in self.data:
-            date = datetime.strptime(date_str, self.STORED_DATE_FORMAT)
-            if date.date() == curr_date.date():
-                if date.time() >= opening.time() and date.time() <= closing.time():
-                    if prev:
-                        smooth = (count + prev) / 2
-                    else:
-                        smooth  = count
-                    prev = count
-
-                    datetime_to_perc[date_str] = datetime_to_perc[date_str] = min(int(smooth / (capacity_values[1] - capacity_values[0]) * 100), 100)
-
-        predicted_data = self.get_predicted_data(today.weekday())
-        
+        predicted_data = self.get_predicted_data(curr_date, last_date, last_count)
         msg = curr_date.strftime('%A') + ', ' + curr_date.strftime('%B') + ' ' + str(curr_date.day)
         return {'historical' : datetime_to_perc, 'predicted' : predicted_data, 'msg': msg}
 
 
-    def get_predicted_data(self, weekday) -> Dict[str, float]:
+    def get_predicted_data(self, date: datetime, last_date_str, last_count) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from now to close based on predictions.
         '''
         now = datetime.now(self.timezone)   # For current time
-        opening, closing = config.OPEN_HOURS[now.weekday()]
+        opening, closing = config.OPEN_HOURS[date.weekday()]
         datetime_to_perc = {}
-
-        self.calculate_predicted_data(weekday)
-        
-        # Use the last observed value as first predicted value
+        # No predictions for past days
+        if date.date() < now.date():
+            return {}
+        self.calculate_predicted_data(date.weekday())
         today = datetime.now(self.timezone)
-        last_date_str, last_count = self.data[-1]
-        last_date = datetime.strptime(last_date_str, self.STORED_DATE_FORMAT)
-        if last_date.date() == today.date() and last_date.time() >= opening.time() and last_date.time() <= closing.time():
-            datetime_to_perc[last_date_str] = min(int(last_count / config.MAX_CAPACITY * 100), 100)
-        
-
-        # Use values from predicted data from now until closing
-        for time_str, count in self.predicted_data:
-            # Extract time from formatted string
-            time = datetime.strptime(time_str, self.STORED_TIME_FORMAT).time()
-            # Use (today's date) + (time from prediction)
-            prediction_datetime = now.replace(hour=time.hour, minute=time.minute, second=0)
-            # Filter for times between now and closing time
-            if time >= now.time() and time <= closing.time():
-                # Create string with today's date + time from prediction
-                prediction_datetime_str = prediction_datetime.strftime(self.STORED_DATE_FORMAT)
-                datetime_to_perc[prediction_datetime_str] = min(int(count / config.MAX_CAPACITY * 100), 100)
+        if date.date() >= today.date():
+            # Use the last observed value as first predicted value
+            if date.date() == now.date() and date.time() >= opening.time() and date.time() <= closing.time():
+                datetime_to_perc[last_date_str] = min(int(last_count / config.MAX_CAPACITY * 100), 100)
+            # Use values from predicted data from now until closing
+            for time_str, count in self.predicted_data:
+                # Extract time from formatted string
+                time = datetime.strptime(time_str, self.STORED_TIME_FORMAT).time()
+                # Use (today's date) + (time from prediction)
+                prediction_datetime = date.replace(hour=time.hour, minute=time.minute, second=0)
+                # Filter for times between now and closing time
+                if (date.date() > now.date() or time >= now.time()) and time >= opening.time() and time <= closing.time():
+                    # Create string with today's date + time from prediction
+                    prediction_datetime_str = prediction_datetime.strftime(self.STORED_DATE_FORMAT)
+                    datetime_to_perc[prediction_datetime_str] = min(int(count / config.MAX_CAPACITY * 100), 100)
         return datetime_to_perc 
 
 
@@ -210,7 +211,7 @@ class Service:
         # Filter dataframe to only include data from specified day
         df = df.set_index('datetime')
         df = df.reset_index()
-        df = df[df['datetime'].dt.dayofweek == 0]
+        df = df[df['datetime'].dt.dayofweek == weekday]
         df = df.set_index('datetime')
         # Convert time to 30-minute intervals
         df_by_30_min = pd.DataFrame(df['count'].resample('30 min').mean())

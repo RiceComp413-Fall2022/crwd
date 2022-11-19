@@ -1,55 +1,48 @@
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import os
 import time
 import urllib.request
 import base64
 import gitlab
-from dotenv import load_dotenv
+
+try:
+    import config
+except ImportError:
+    print('Missing config.py. Exiting.')
+    exit()
 
 
 def main():
     '''Read the data from IT and update the server, in a loop'''
     print('Running main() in read_IT_data.py')
 
-    # Read .env file
-    load_dotenv()
-    GITLAB_URL = os.getenv('GITLAB_URL', '')
-    GITLAB_TOKEN = os.getenv('GITLAB_TOKEN', '')
-    PROJECT_ID = os.getenv('PROJECT_ID', '')
-    CSV_FILE_NAME = os.getenv('CSV_FILE_NAME', '')
-    BACKEND_URL = os.getenv('BACKEND_URL', '')
-    BACKEND_PASSWORD = os.getenv('BACKEND_PASSWORD', '')
-    if '' in [BACKEND_URL, BACKEND_PASSWORD, GITLAB_URL, GITLAB_TOKEN, PROJECT_ID, CSV_FILE_NAME]:
-        print('Missing environment variable. Check .env. Exiting.')
-        return
-
     # Check backend connection
     print('Checking backend connection.')
-    while not check_backend_connection(BACKEND_URL):
+    while not check_backend_connection(config.BACKEND_URL):
         print('Failed to connect to backend. Sleeping for 10 seconds.')
         time.sleep(10)
 
     # Run main loop: read from Gitlab, write to backend
-    prev_time = ''
+    prev_time = None
     while True:
         # Wait for a minute (besides the first iteration)
-        if prev_time != '':
+        if prev_time is not None:
             time.sleep(60)
-        # Read time and count from IT GitLab
-        latest_IT_data = get_latest_IT_data(PROJECT_ID, GITLAB_URL, GITLAB_TOKEN, CSV_FILE_NAME)
-        if latest_IT_data is None:
+        # Read times and counts from IT GitLab
+        latest_IT_data = get_latest_IT_data(config.PROJECT_ID, config.GITLAB_URL, config.GITLAB_TOKEN, config.LOCATION_TO_FILENAME)
+        if not latest_IT_data:
             print('Failed to read data from GitLab. Sleeping for 1 minute.')
-            prev_time = 'N/A'
+            prev_time = ''
             continue
-        new_time, count = latest_IT_data
+        new_time, _ = list(latest_IT_data.values())[0]
         # Check if the data is new
         if new_time == prev_time:
             print('No new data. Sleeping for 1 minute.')
             continue
         # Report the data to the backend
-        print(f'New data! Time: {new_time}, Count: {count}')
-        report_to_backend(n_devices=count, backend_url=BACKEND_URL, password=BACKEND_PASSWORD)
+        print(f'New data! {latest_IT_data}')
+        report_to_backend(latest_IT_data, backend_url=config.BACKEND_URL, password=config.BACKEND_PASSWORD)
         prev_time = new_time
 
 
@@ -58,7 +51,26 @@ def main():
 #################################################
 
 
-def get_latest_IT_data(project_id: str, gitlab_url: str, gitlab_token: str, csv_file_name: str) -> Optional[Tuple[str, int]]:
+def get_latest_IT_data(
+    project_id: str, 
+    gitlab_url: str, 
+    gitlab_token: str, 
+    location_to_filename: Dict[str,str]) -> Dict[str, Tuple[str, int]]:
+    '''Returns the latest time and device count from the IT data on GitLab for each provided location'''
+    result: Dict[str, Tuple[str, int]] = {}
+    # Get data for each location
+    for location_name, filename in location_to_filename.items():
+        data = get_latest_IT_data_single_location(project_id, gitlab_url, gitlab_token, filename)
+        if data:
+            result[location_name] = data
+    return result
+
+
+def get_latest_IT_data_single_location(
+    project_id: str,
+    gitlab_url: str, 
+    gitlab_token: str,
+    csv_file_name: str) -> Optional[Tuple[str, int]]:
     '''Returns the latest time and device count from the IT data on GitLab'''
     IT_data = read_IT_csv(project_id, gitlab_url, gitlab_token, csv_file_name)
     last_row = extract_last_row(IT_data)
@@ -121,13 +133,21 @@ def extract_time_count(csv_row: str) -> Optional[Tuple[str, int]]:
 #               Report to Backend               #
 #################################################
 
-
-def report_to_backend(n_devices: int, backend_url: str, password: str) -> None:
+def report_to_backend(location_to_data: Dict[str, Tuple[str, int]], backend_url: str, password: str) -> None:
     '''Reports the given number of devices to the backend.'''
-    print(f'Reporting device count ({n_devices}) to backend.')
+    print(f'Reporting data to backend.')
+    for location, data in location_to_data.items():
+        _, count = data
+        report_single_count_to_backend(location, count, backend_url, password)
+
+
+def report_single_count_to_backend(location_name: str, n_devices: int, backend_url: str, password: str) -> None:
+    '''Reports the given number of devices to the backend.'''
+    print(f'Reporting {n_devices} devices at {location_name} to backend.')
 
     # Call endpoint on backend: updateTotalDevices/n/password
-    request_url = f'{backend_url}/updateTotalDevices/{n_devices}/{password}'
+    request_url = f'{backend_url}/updateTotalDevices/{location_name}/{n_devices}/{password}'
+    print(f'Making request to: {request_url}')
     try:
         urllib.request.urlopen(request_url)
     except:

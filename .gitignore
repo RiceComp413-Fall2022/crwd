@@ -8,6 +8,9 @@ build/
 backup.csv
 test-backup.csv
 
+# ReadITData (python)
+readITData/config.py
+
 # Mac File
 .DS_Store
 

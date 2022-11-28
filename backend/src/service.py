@@ -81,7 +81,7 @@ class Service:
     def get_curr_status(self) -> Dict[str, Any]:
         '''Returns messages indicating how busy Chaus is at the moment.'''
         # Handle no data
-        if len(self.data) == 0:
+        if not self.data:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
 
         # Default to white text
@@ -160,6 +160,12 @@ class Service:
             return {}
         predicted_data = self.calculate_predicted_data(date.weekday())
         today = datetime.now(self.timezone)
+
+        # Make sure we have predictions (and didn't fail due to lack of data)
+        if not predicted_data:
+            print('[ERROR] Failed to get predicted data.')
+            return {}
+
         if date.date() >= today.date():
             # Use the last observed value as first predicted value
             if date.date() == now.date() and date.time() >= opening.time() and date.time() <= closing.time():
@@ -183,6 +189,11 @@ class Service:
         The result is stored in self.predicted_data.
         Note: the times are formatted such as "08:30" and do not contain dates
         '''
+        # Check for no data
+        if not self.data:
+            print('[ERROR] Attempting to make predictions on no data.')
+            return []
+        
         print('Calculating predicted data.')
         # Convert all data to dataframe
         df = pd.DataFrame(self.data, columns=['datetime', 'count'])
@@ -272,7 +283,15 @@ class Service:
             date = datetime.strptime(date_str, self.STORED_DATETIME_FORMAT)
             opening, closing = config.OPEN_HOURS[date.weekday()]
             if date.time() >= opening.time() and date.time() <= closing.time():
-                all_crowd_values.append(count)
+                # Disregard counts of 0-1, which likely indicate being closed (e.g. holiday)
+                if count > 1:
+                    all_crowd_values.append(count)
+        
+        # Avoid statistical calculation on small data
+        if len(all_crowd_values) < 100:
+            print('Not enough data to calculate min/max. Using 0, 100.')
+            self.min_count, self.max_count = 0, 100
+            return
 
         # Get the 99th percentile as the max value and the 1st percentile as the min value
         percentile1 = int(0.01 * len(all_crowd_values))

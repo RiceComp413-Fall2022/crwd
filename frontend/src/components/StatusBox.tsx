@@ -5,28 +5,8 @@ import { BACKEND_URL } from '../Constants';
 import './StatusBox.css'
 
 
-// The expected data from the server's /getCurrentStatus/chaus endpoint
-interface ChausStatus {
-  msg1: string;
-  msg2: string;
-  perc: number;
-  time: string;
-  backgroundColor: string;
-  textColor: string
-}
-
-// The expected data from the server's /getCurrentStatus/brochstein endpoint
-interface BrochsteinStatus {
-  msg1: string;
-  msg2: string;
-  perc: number;
-  time: string;
-  backgroundColor: string;
-  textColor: string
-}
-
-// The expected data from the server's /getCurrentStatus/audreys endpoint
-interface AudreysStatus {
+// The expected data from the server's /getCurrentStatus/location endpoint
+interface LocationStatus {
   msg1: string;
   msg2: string;
   perc: number;
@@ -37,42 +17,30 @@ interface AudreysStatus {
 
 function StatusBox() {
 
-  // Store server response for Chaus
-  const [chausStatus, setChausStatus] = useState({
+  const defaultState = {
     msg1: 'N/A',
     msg2: 'N/A',
     perc: 0,
     time: 'N/A', 
     backgroundColor: 'transparent',
     textColor: 'white'
-  });
+  };
+
+  // Store server response for Chaus
+  const [chausStatus, setChausStatus] = useState(defaultState);
 
   // Store server response for Brochstein
-  const [brochsteinStatus, setBrochsteinStatus] = useState({
-    msg1: 'N/A',
-    msg2: 'N/A',
-    perc: 0,
-    time: 'N/A', 
-    backgroundColor: 'transparent',
-    textColor: 'white'
-  });
+  const [brochsteinStatus, setBrochsteinStatus] = useState(defaultState);
 
   // Store server response for Audrey's
-  const [audreysStatus, setAudreysStatus] = useState({
-    msg1: 'N/A',
-    msg2: 'N/A',
-    perc: 0,
-    time: 'N/A', 
-    backgroundColor: 'transparent',
-    textColor: 'white'
-  });
+  const [audreysStatus, setAudreysStatus] = useState(defaultState);
 
 
   // Fetch /getCurrentStatus/chaus from server
   useEffect(() => {
     fetch(BACKEND_URL + "/getCurrentStatus/chaus")
       .then((response) => response.json())
-      .then((chausStatus: ChausStatus) => {
+      .then((chausStatus: LocationStatus) => {
         setChausStatus(chausStatus);
       });
   }, [])
@@ -81,7 +49,7 @@ function StatusBox() {
   useEffect(() => {
     fetch(BACKEND_URL + "/getCurrentStatus/brochstein")
       .then((response) => response.json())
-      .then((brochsteinStatus: BrochsteinStatus) => {
+      .then((brochsteinStatus: LocationStatus) => {
         setBrochsteinStatus(brochsteinStatus);
       });
   }, [])
@@ -90,7 +58,7 @@ function StatusBox() {
   useEffect(() => {
     fetch(BACKEND_URL + "/getCurrentStatus/audreys")
       .then((response) => response.json())
-      .then((audreysStatus: AudreysStatus) => {
+      .then((audreysStatus: LocationStatus) => {
         setAudreysStatus(audreysStatus);
       });
   }, [])

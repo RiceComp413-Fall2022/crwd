@@ -9,6 +9,7 @@ import os
 
 from src.backup import Backup
 from src.service import Service
+from src import config
 
 BACKUP_CSV_PATH = './backup.csv'
 
@@ -47,34 +48,39 @@ TIMEZONE = timezone('US/Central')
 # Create Service instance
 date = date.today()
 opening_time = datetime(date.year, date.month, date.day, 8, 0, 0)
-service_obj = Service(opening_time, chaus_backup, PASSKEY, TIMEZONE)
-service_obj.restore_from_backup()  # Restore from backup
-
+chaus_service_obj = Service(opening_time, chaus_backup, PASSKEY, config.CHAUS_OPEN_HOURS, TIMEZONE)
+audreys_service_obj = Service(opening_time, audreys_backup, PASSKEY, config.AUDREYS_OPEN_HOURS, TIMEZONE)
+broch_service_obj = Service(opening_time, brochstein_backup, PASSKEY, config.BROCHSTEIN_OPEN_HOURS, TIMEZONE)
+locations = {'chaus': chaus_service_obj, 'audreys': audreys_service_obj, 'brochstein': broch_service_obj}
+# different updates
+chaus_service_obj.restore_from_backup()  # Restore from backup
+audreys_service_obj.restore_from_backup()
+broch_service_obj.restore_from_backup()
 
 @app.route('/')
 def hello() -> str:
     return 'Hello, World!'
 
 
-@app.route('/getCurrentStatus')
-def get_curr_status_route():
-    return service_obj.get_curr_status()
+@app.route('/getCurrentStatus/<location>')
+def get_curr_status_route(location):
+    return locations[location].get_curr_status()
 
 
-@app.route('/getDailyData/<offset>')
-def get_daily_data_route(offset) -> Dict:
-    return service_obj.get_daily_data(offset)
+@app.route('/getDailyData/<location>/<offset>')
+def get_daily_data_route(offset, location) -> Dict:
+    return locations[location].get_daily_data(offset)
 
 
-@app.route('/updateTotalDevices/<numDevices>/<passkey>')
-def update_total_devices_route(numDevices, passkey) -> str:
-    status = service_obj.update_total_devices(numDevices, passkey)
+@app.route('/updateTotalDevices/<location>/<numDevices>/<passkey>')
+def update_total_devices_route(numDevices, passkey, location) -> str:
+    status = locations[location].update_total_devices(numDevices, passkey)
     return status
 
 
 @app.route('/getDummyData')
 def get_data_route() -> List[Tuple[str, int]]:
-    return service_obj.get_dummy_data()
+    return chaus_service_obj.get_dummy_data()
 
 
 if __name__ == '__main__':

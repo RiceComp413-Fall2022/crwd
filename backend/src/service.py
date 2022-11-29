@@ -17,13 +17,13 @@ class Service:
 
     # The string format of times stored in predicted_data
     STORED_TIME_FORMAT = '%H:%M'
-
     def __init__(self,
                  opening_time: datetime,
                  backup: Backup,
                  passkey: str,
+                 open_hours: Dict,
                  timezone: Optional[tzinfo] = None):
-        self.opening_time = opening_time
+        self.open_hours = open_hours
         self.data: List[Tuple[str, int]] = []
         self.backup = backup
         self.passkey = passkey
@@ -39,7 +39,7 @@ class Service:
 
     def get_daily_data(self, day_offset: int) -> Dict[str, Any]:
         '''
-        Calculates historical and predicted percentages of how busy Chaus was/is during a given day.
+        Calculates historical and predicted percentages of how busy the location was/is during a given day.
         offset_days: a number describing the day-offset to calculate for.
             e.g. offset_days = 0 means "get data for today"
             e.g. offset_days = -1 means "get data for yesterday"
@@ -54,12 +54,12 @@ class Service:
         last_date = last_count = None
         # Calculate historical data (only for today or earlier)
         if target_date.date() <= today.date():
-            opening, closing = config.OPEN_HOURS[target_date.weekday()]
+            opening, closing = self.open_hours[target_date.weekday()]
             prev = None
             for date_str, count in self.data:
                 date = datetime.strptime(date_str, self.STORED_DATETIME_FORMAT)
                 if date.date() == target_date.date():
-                    # Only show data from when chaus is open
+                    # Only show data from when the location is open
                     if date.time() >= opening.time() and date.time() <= closing.time():
                         # Calculate a "smoothed" value as the average of current and previous value
                         if prev:
@@ -79,7 +79,7 @@ class Service:
         return {'historical' : datetime_to_perc, 'predicted' : predicted_data, 'msg': msg}
 
     def get_curr_status(self) -> Dict[str, Any]:
-        '''Returns messages indicating how busy Chaus is at the moment.'''
+        '''Returns messages indicating how busy the location is at the moment.'''
         # Handle no data
         if not self.data:
             return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
@@ -87,8 +87,8 @@ class Service:
         # Default to white text
         text_color = 'white'
 
-        if self.is_chaus_open():
-            # Chaus is open -> msg1: "Chaus is X% busy", msg2: "Updated Y ago"
+        if self.is_open():
+            #  is open -> msg1: " is X% busy", msg2: "Updated Y ago"
             # Get last value
             formatted_time, count = self.data[-1]
 
@@ -108,27 +108,27 @@ class Service:
             else:
                 background_color = '#A58B7A' #beaver
                 text_color = 'black'
-            message1 = f'Chaus is {perc}% full'
+            message1 = f' is {perc}% full'
             message2 = f'Updated {time_ago_message}'
         else:
-            # Chaus is closed -> msg1: "chaus is closed!", msg2: "Chaus will open at X"
-            message1 = 'Chaus is closed!'
+            #  is closed -> msg1: " is closed!", updatedMsg: " will open at X"
+            message1 = ' is closed!'
             # Use red background
             background_color = '#E0785F'
 
             # get the current time
             today = datetime.now(self.timezone)
-            opening_today = config.OPEN_HOURS[today.weekday()][0]
+            opening_today = self.open_hours[today.weekday()][0]
             # Before opening time today -> return the opening time
             if today.time() < opening_today.time():
-                message2 = f'Chaus opens at {opening_today.time().strftime("%-I:%M %p")}'
+                message2 = f' opens at {opening_today.time().strftime("%-I:%M %p")}'
             else:
                 # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
-                opening_tmrw = config.OPEN_HOURS[(today.weekday() % 6) + 1][0]
-                message2 = f'Chaus opens at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
+                opening_tmrw = self.open_hours[(today.weekday() % 6) + 1][0]
+                message2 = f' opens at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
         return {
             'msg1': message1,
-            'msg2': message2,
+            'updatedMsg': message2,
             'backgroundColor': background_color,
             'textColor': text_color
         }
@@ -153,7 +153,7 @@ class Service:
         Creates a list of percentages of how busy Chaus was at every minute from now to close based on predictions.
         '''
         now = datetime.now(self.timezone)   # For current time
-        opening, closing = config.OPEN_HOURS[date.weekday()]
+        opening, closing = self.open_hours[date.weekday()]
         datetime_to_perc = {}
         # No predictions for past days
         if date.date() < now.date():
@@ -264,24 +264,24 @@ class Service:
         print(f'Using {len(self.data)} values from backup from the last 30 days.')
 
         # Perform required actions after data is loaded
-        self.calculate_chaus_capacity()
+        self.calculate_capacity()
 
 
     #############################################
     #         Capacity Calculations              #
     #############################################
 
-    def calculate_chaus_capacity(self) -> None:
+    def calculate_capacity(self) -> None:
         '''
         Calculates a statistical minimum and maximum counts from the data.
             e.g. if the data typically lies between 10 and 130, this function will compute min_count = 10, max_count = 130.
         The function saves the results to self.min_count and self.max_count, respectively.
         '''
-        # Get all counts from the past (when chaus is open)
+        # Get all counts from the past (when location is open)
         all_crowd_values = []
         for date_str, count in self.data:
             date = datetime.strptime(date_str, self.STORED_DATETIME_FORMAT)
-            opening, closing = config.OPEN_HOURS[date.weekday()]
+            opening, closing = self.open_hours[date.weekday()]
             if date.time() >= opening.time() and date.time() <= closing.time():
                 # Disregard counts of 0-1, which likely indicate being closed (e.g. holiday)
                 if count > 1:
@@ -316,11 +316,11 @@ class Service:
     #          Shared helper functions          #
     #############################################
 
-    def is_chaus_open(self) -> bool:
-        '''Returns true if chaus is currently open, false otherwise'''
+    def is_open(self) -> bool:
+        '''Returns true if the location is currently open, false otherwise'''
         today = datetime.now(self.timezone)
-        opening = config.OPEN_HOURS[today.weekday()][0]
-        closing = config.OPEN_HOURS[today.weekday()][1]
+        opening = self.open_hours[today.weekday()][0]
+        closing = self.open_hours[today.weekday()][1]
         return today.time() >= opening.time() and today.time() <= closing.time()
 
 

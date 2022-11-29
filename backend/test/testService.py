@@ -39,9 +39,9 @@ class TestService(unittest.TestCase):
 
         # Create service and update total devices
         service = Service(datetime.now(), self.backup_path)
-        service.update_total_devices(2)
-        service.update_total_devices(4)
-        service.update_total_devices(6)
+        service.update_count(2)
+        service.update_count(4)
+        service.update_count(6)
 
         # Restore data to new service
         new_service = Service(datetime.now(), self.backup_path)

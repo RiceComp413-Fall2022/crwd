@@ -36,7 +36,7 @@ function LocationStatusBox(props: StatusBoxProps): ReactElement {
 
   // Fetch /getCurrentStatus/<location> from server
   useEffect(() => {
-    fetch(BACKEND_URL + "/getCurrentStatus/" + props.locationName)
+    fetch(BACKEND_URL + "/currentStatus/" + props.locationName)
       .then((response) => response.json())
       .then((status: LocationStatus) => {
         setLocationStatus(status);

@@ -145,8 +145,8 @@ def report_single_count_to_backend(location_name: str, n_devices: int, backend_u
     '''Reports the given number of devices to the backend.'''
     print(f'Reporting {n_devices} devices at {location_name} to backend.')
 
-    # Call endpoint on backend: updateTotalDevices/n/password
-    request_url = f'{backend_url}/updateTotalDevices/{location_name}/{n_devices}/{password}'
+    # Call endpoint on backend: updateCount/location_name/n/password
+    request_url = f'{backend_url}/updateCount/{location_name}/{n_devices}/{password}'
     print(f'Making request to: {request_url}')
     try:
         urllib.request.urlopen(request_url)

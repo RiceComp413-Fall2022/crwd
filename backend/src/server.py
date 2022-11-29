@@ -64,7 +64,7 @@ def hello() -> str:
     return 'Hello, World!'
 
 
-@app.route('/getCurrentStatus/<location>')
+@app.route('/currentStatus/<location>')
 def get_curr_status_route(location) -> Dict:
     if location not in location_name_to_service:
         return {
@@ -73,25 +73,38 @@ def get_curr_status_route(location) -> Dict:
             'backgroundColor': 'white',
             'textColor': 'black'
         }
-    return location_name_to_service[location].get_curr_status()
+    return location_name_to_service[location].get_current_status()
 
 
-@app.route('/getDailyData/<location>/<offset>')
-def get_daily_data_route(offset, location) -> Dict:
+@app.route('/dailyData/<location>/<offset_days>')
+def get_daily_data_route(offset_days, location) -> Dict:
+    '''
+    Calculates historical and predicted percentages of how busy the location was/is during a given day.
+    offset_days: a number describing the day-offset to calculate for.
+        e.g. offset_days = 0 means "get data for today"
+        e.g. offset_days = -1 means "get data for yesterday"
+        e.g. offset_days = 1 means "get data for tomorrow"
+    Returns: a dictionary with keys "historical," "predicted," and "msg" 
+                where "msg" is the date that the data is for
+    '''
     if location not in location_name_to_service:
-        return {}
-    return location_name_to_service[location].get_daily_data(offset)
+        return {
+            'historical': {},
+            'predicted': {},
+            'msg': 'ERROR: Location not recognized.'
+        }
+    return location_name_to_service[location].get_daily_data(offset_days)
 
 
-@app.route('/updateTotalDevices/<location>/<numDevices>/<passkey>')
+@app.route('/updateCount/<location>/<numDevices>/<passkey>')
 def update_total_devices_route(numDevices, passkey, location) -> str:
     if location not in location_name_to_service:
         return 'ERROR: Location not recognized.'
-    status = location_name_to_service[location].update_total_devices(numDevices, passkey)
+    status = location_name_to_service[location].update_count(numDevices, passkey)
     return status
 
 
-@app.route('/getDummyData')
+@app.route('/dummyData')
 def get_data_route() -> List[Tuple[str, int]]:
     return chaus_service_obj.get_dummy_data()
 

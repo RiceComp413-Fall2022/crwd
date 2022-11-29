@@ -8,9 +8,17 @@ import timeago
 
 from src.backup import Backup
 from src import dummy_data
-from src import config
 
 class Service:
+    '''
+    Implements a count-tracking service for a single location (e.g. the crowdedness of a single cafe).
+    Intended use: one Service instance shoule be constructed by the Server for each location being served.
+    API:
+    - update_count() accepts updated counts.
+    - get_daily_data() provides historical counts for a given day, as well as predicted counts for today or future days.
+    - get_current_status() provides a message describing the current count for this location (e.g. "is 25% full" or "is closed until 9 a.m.")
+    - save_to_backup() and restore_from_backup() use a Backup instance to backup/restore the count data.
+    '''
 
     # The string format of datetimes stored in data
     STORED_DATETIME_FORMAT = '%m/%d/%Y %H:%M'
@@ -77,17 +85,22 @@ class Service:
         msg = f'{target_date.strftime("%A, %B")} {target_date.day}'
         return {'historical' : datetime_to_perc, 'predicted' : predicted_data, 'msg': msg}
 
-    def get_curr_status(self) -> Dict[str, Any]:
+    def get_current_status(self) -> Dict[str, Any]:
         '''Returns messages indicating how busy the location is at the moment.'''
         # Handle no data
         if not self.data:
-            return {'msg': 'No data yet.', 'perc': 0.0, 'time': 'N/A'}
+            return {
+                'msg': 'No data yet.',
+                'updatedMsg': 'N/A',
+                'backgroundColor': 'white',
+                'textColor': 'black'
+            }
 
         # Default to white text
         text_color = 'white'
 
         if self.is_open():
-            #  is open -> msg1: " is X% busy", msg2: "Updated Y ago"
+            #  is open -> msg: " is X% busy", updatedMsg: "Updated Y ago"
             # Get last value
             formatted_time, count = self.data[-1]
 
@@ -132,8 +145,8 @@ class Service:
             'textColor': text_color
         }
 
-    def update_total_devices(self, num_devices: int, passkey: str) -> str:
-        '''Saves an updated value for the number of devices'''
+    def update_count(self, num_devices: int, passkey: str) -> str:
+        '''Saves an updated value for the count of people (or devices) in the location.'''
         if passkey != os.getenv('PASSKEY'):
             return 'update failed'
         time = datetime.now(self.timezone).strftime(self.STORED_DATETIME_FORMAT)

@@ -15,3 +15,17 @@
     padding-bottom: 3vh !important;
   }
 }
+
+/* Desktop: hide mobile */
+@media (min-width: 770px) {
+  .mobileOnly {
+    display: none
+  }
+}
+
+/* Mobile: hide desktop */
+@media (max-width: 770px) {
+  .desktopOnly {
+    display: none
+  }
+}

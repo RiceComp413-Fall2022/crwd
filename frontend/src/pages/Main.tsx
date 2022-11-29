@@ -1,5 +1,5 @@
 import React from 'react';
-import StatusBox from '../components/StatusBox';
+import StatusRow from '../components/StatusRow';
 import Graph from '../components/Graph';
 
 import './Main.css';
@@ -14,7 +14,7 @@ function Main() {
       </div>
 
       <div className="mainRow">
-        <StatusBox />
+        <StatusRow />
       </div>
 
       <div className="mainRow">

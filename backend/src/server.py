@@ -41,17 +41,19 @@ chaus_backup = Backup(GITHUB_ACCESS_TOKEN, GIST_ID, 'chaus.csv')
 audreys_backup = Backup(GITHUB_ACCESS_TOKEN, GIST_ID, 'audreys.csv')
 brochstein_backup = Backup(GITHUB_ACCESS_TOKEN, GIST_ID, 'brochstein.csv')
 
-
 # Use US central timezone
 TIMEZONE = timezone('US/Central')
 
 # Create Service instance
 date = date.today()
 opening_time = datetime(date.year, date.month, date.day, 8, 0, 0)
-chaus_service_obj = Service(opening_time, chaus_backup, PASSKEY, config.CHAUS_OPEN_HOURS, TIMEZONE)
-audreys_service_obj = Service(opening_time, audreys_backup, PASSKEY, config.AUDREYS_OPEN_HOURS, TIMEZONE)
-broch_service_obj = Service(opening_time, brochstein_backup, PASSKEY, config.BROCHSTEIN_OPEN_HOURS, TIMEZONE)
-locations = {'chaus': chaus_service_obj, 'audreys': audreys_service_obj, 'brochstein': broch_service_obj}
+chaus_service_obj = Service(chaus_backup, PASSKEY, config.CHAUS_OPEN_HOURS, TIMEZONE)
+audreys_service_obj = Service(audreys_backup, PASSKEY, config.AUDREYS_OPEN_HOURS, TIMEZONE)
+broch_service_obj = Service(brochstein_backup, PASSKEY, config.BROCHSTEIN_OPEN_HOURS, TIMEZONE)
+
+# Map location name to Service
+location_name_to_service = {'chaus': chaus_service_obj, 'audreys': audreys_service_obj, 'brochstein': broch_service_obj}
+
 # different updates
 chaus_service_obj.restore_from_backup()  # Restore from backup
 audreys_service_obj.restore_from_backup()
@@ -63,18 +65,29 @@ def hello() -> str:
 
 
 @app.route('/getCurrentStatus/<location>')
-def get_curr_status_route(location):
-    return locations[location].get_curr_status()
+def get_curr_status_route(location) -> Dict:
+    if location not in location_name_to_service:
+        return {
+            'msg': 'N/A',
+            'updatedMsg': 'N/A',
+            'backgroundColor': 'white',
+            'textColor': 'black'
+        }
+    return location_name_to_service[location].get_curr_status()
 
 
 @app.route('/getDailyData/<location>/<offset>')
 def get_daily_data_route(offset, location) -> Dict:
-    return locations[location].get_daily_data(offset)
+    if location not in location_name_to_service:
+        return {}
+    return location_name_to_service[location].get_daily_data(offset)
 
 
 @app.route('/updateTotalDevices/<location>/<numDevices>/<passkey>')
 def update_total_devices_route(numDevices, passkey, location) -> str:
-    status = locations[location].update_total_devices(numDevices, passkey)
+    if location not in location_name_to_service:
+        return 'ERROR: Location not recognized.'
+    status = location_name_to_service[location].update_total_devices(numDevices, passkey)
     return status
 
 

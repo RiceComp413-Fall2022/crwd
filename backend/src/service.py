@@ -18,7 +18,6 @@ class Service:
     # The string format of times stored in predicted_data
     STORED_TIME_FORMAT = '%H:%M'
     def __init__(self,
-                 opening_time: datetime,
                  backup: Backup,
                  passkey: str,
                  open_hours: Dict,
@@ -108,11 +107,11 @@ class Service:
             else:
                 background_color = '#A58B7A' #beaver
                 text_color = 'black'
-            message1 = f' is {perc}% full'
-            message2 = f'Updated {time_ago_message}'
+            msg = f' is {perc}% full'
+            updated_msg = f'Updated {time_ago_message}'
         else:
-            #  is closed -> msg1: " is closed!", updatedMsg: " will open at X"
-            message1 = ' is closed!'
+            #  is closed -> msg: "is closed!", updatedMsg: "will open at X"
+            msg = 'is closed!'
             # Use red background
             background_color = '#E0785F'
 
@@ -121,14 +120,14 @@ class Service:
             opening_today = self.open_hours[today.weekday()][0]
             # Before opening time today -> return the opening time
             if today.time() < opening_today.time():
-                message2 = f' opens at {opening_today.time().strftime("%-I:%M %p")}'
+                updated_msg = f'opens at {opening_today.time().strftime("%-I:%M %p")}'
             else:
                 # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
                 opening_tmrw = self.open_hours[(today.weekday() % 6) + 1][0]
-                message2 = f' opens at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
+                updated_msg = f'opens at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
         return {
-            'msg1': message1,
-            'updatedMsg': message2,
+            'msg': msg,
+            'updatedMsg': updated_msg,
             'backgroundColor': background_color,
             'textColor': text_color
         }
@@ -319,8 +318,7 @@ class Service:
     def is_open(self) -> bool:
         '''Returns true if the location is currently open, false otherwise'''
         today = datetime.now(self.timezone)
-        opening = self.open_hours[today.weekday()][0]
-        closing = self.open_hours[today.weekday()][1]
+        opening, closing = self.open_hours[today.weekday()]
         return today.time() >= opening.time() and today.time() <= closing.time()
 
 
@@ -331,7 +329,7 @@ class Service:
     def get_dummy_data(self) -> List[Tuple[str, int]]:
         '''Returns dummy data for testing.'''
         curr_time = datetime.now()
-        diff = curr_time - self.opening_time
+        diff = curr_time - self.open_hours[0][0]
         # calc how many minutes have passed since opening
         num_minutes = math.ceil(diff.total_seconds() / 60)
         minutes_between_values = 30

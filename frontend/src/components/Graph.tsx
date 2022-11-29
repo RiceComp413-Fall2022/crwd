@@ -29,7 +29,7 @@ function Graph() {
 
   // Fetch /getDailyData from server
   useEffect(() => {
-    fetch(BACKEND_URL + "/getDailyData/" + currentOffset)
+    fetch(BACKEND_URL + "/getDailyData/chaus/" + currentOffset)
     .then((response) => response.json())
     .then((response) => {
       setChausData(response.historical);

@@ -4,7 +4,7 @@ from datetime import datetime
 
 # map numeric representation of the weekday to (opening, closing) times
 # use Jan. 1, 2022 as a temp date
-OPEN_HOURS = {0 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 23, 59, 59)),
+CHAUS_OPEN_HOURS = {0 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 23, 59, 59)),
               1 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 23, 59, 59)),
               2 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 23, 59, 59)),
               3 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 23, 59, 59)),

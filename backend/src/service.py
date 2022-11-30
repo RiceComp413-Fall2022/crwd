@@ -125,8 +125,8 @@ class Service:
         else:
             #  is closed -> msg: "is closed!", updatedMsg: "will open at X"
             msg = 'is closed!'
-            # Use red background
-            background_color = '#E0785F'
+            text_color = 'black'
+            background_color = 'white'
 
             # get the current time
             today = datetime.now(self.timezone)
@@ -300,7 +300,7 @@ class Service:
                     all_crowd_values.append(count)
         
         # Avoid statistical calculation on small data
-        if len(all_crowd_values) < 100:
+        if len(all_crowd_values) < 50:
             print('Not enough data to calculate min/max. Using 0, 100.')
             self.min_count, self.max_count = 0, 100
             return

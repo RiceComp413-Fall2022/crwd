@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, Row, Dropdown } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,24 +19,26 @@ import { BACKEND_URL } from '../Constants';
 
 function Graph() {
   // Store server response
-  const [chausData, setChausData] = useState({});
+  const [cafeData, setCafeData] = useState({});
   const [displayDate, setDisplayDate] = useState("");
   const [predictedData, setPredictedData] = useState({});
   const [currentOffset, setCurrentOffset] = useState(0);
   const [shouldAnimateChart, setShouldAnimateChart] = useState(true);
+  const [selectedLocation, setSelectedLocation] = useState('chaus')
+  const [prettyLocation, setPrettyLocation] = useState('Chaus')
 
   const SERVER_TIME_FORMAT = 'MM/dd/yyyy HH:mm';
 
   // Fetch /getDailyData from server
   useEffect(() => {
-    fetch(BACKEND_URL + "/dailyData/chaus/" + currentOffset)
+    fetch(BACKEND_URL + "/dailyData/" + selectedLocation + "/" + currentOffset)
     .then((response) => response.json())
     .then((response) => {
-      setChausData(response.historical);
+      setCafeData(response.historical);
       setDisplayDate(response.msg);
       setPredictedData(response.predicted);
     });
-  }, [currentOffset])
+  }, [currentOffset, selectedLocation])
 
   ChartJS.register(
     CategoryScale,
@@ -114,7 +116,7 @@ function Graph() {
     datasets: [
       {
         label: 'chausCrowd',
-        data: chausData,
+        data: cafeData,
         // data: {"30/09/2022 08:48": 40.19607843137255, "30/09/2022 08:06": 49.01960784313725, "30/09/2022 08:49": 40.19607843137255, "30/09/2022 08:05": 49.01960784313725},
         borderColor: '#322620',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -131,9 +133,27 @@ function Graph() {
 
   return (
     <>
+
     <Row className="pb-4">
+
+      {/* Dropdown to choose which cafe to display on the graph */}
+      <Col xs={1} className="d-flex align-items-center justify-content-end">
+      <Dropdown>
+        {/* <Dropdown.Toggle variant="success" id="dropdown-basic"> */}
+        <Dropdown.Toggle size="lg" variant="light" style={{color: 'pink'}} id="dropdown-basic">
+          Cafe
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => {setSelectedLocation('chaus'); setPrettyLocation('Chaus');}}>Chaus</Dropdown.Item>
+          <Dropdown.Item onClick={() => {setSelectedLocation('brochstein'); setPrettyLocation('Brochstein');}}>Brochstein</Dropdown.Item>
+          <Dropdown.Item onClick={() => {setSelectedLocation('audreys'); setPrettyLocation('Audrey\'s');}}>Audrey's</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      </Col>
+
       {/* Left Arrow: "<" */}
-      <Col xs={3} className="d-flex align-items-center justify-content-end">
+      <Col xs={2} className="d-flex align-items-center justify-content-end">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset - 1);
           // Don't animate after clicking button
@@ -146,12 +166,12 @@ function Graph() {
       {/* Date */}
       <Col>
         <div className="chartTitle">
-          {displayDate}
+          {displayDate + " – " + prettyLocation}
         </div>
       </Col>
 
       {/* Right Arrow: ">" */}
-      <Col xs={3} className="d-flex align-items-center justify-content-start">
+      <Col xs={2} className="d-flex align-items-center justify-content-start">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset + 1);
           // Don't animate after clicking button

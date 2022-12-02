@@ -12,7 +12,7 @@
 }
 
 /* Mobile: less padding */
-@media (max-width: 600px) {
+@media (max-width: 575px) {
   .main {
     padding-left: 4%;
     padding-right: 4%;

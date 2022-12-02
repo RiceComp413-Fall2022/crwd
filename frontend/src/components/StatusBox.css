@@ -13,7 +13,7 @@ h5 {
 }
 
 /* Desktop: more padding */
-@media (min-width: 600px) {
+@media (min-width: 575px) {
   .card-body {
     padding-top: 3vh !important;
     padding-bottom: 3vh !important;
@@ -21,14 +21,14 @@ h5 {
 }
 
 /* Desktop: hide mobile */
-@media (min-width: 770px) {
+@media (min-width: 575px) {
   .mobileOnly {
     display: none
   }
 }
 
 /* Mobile: hide desktop */
-@media (max-width: 770px) {
+@media (max-width: 575px) {
   .desktopOnly {
     display: none
   }

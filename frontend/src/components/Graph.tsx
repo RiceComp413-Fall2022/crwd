@@ -134,39 +134,46 @@ function Graph() {
   return (
     <>
 
-    <Row className="pb-4">
+    <Row className="pb-3">
+      {/* Arrows and Title ( < Title > ) */}
+      <Col sm={8}>
+        <Row>   
+        {/* Left Arrow: "<" */}
+          <Col xs={2} className="d-flex align-items-center justify-content-start">
+            <Button size="lg" variant="light" onClick={() => {
+              setCurrentOffset(currentOffset - 1);
+              // Don't animate after clicking button
+              setShouldAnimateChart(false)}}
+            >
+              &lt;
+            </Button>
+          </Col>
 
-      {/* Left Arrow: "<" */}
-      <Col xs={2} className="d-flex align-items-center justify-content-start">
-        <Button size="lg" variant="light" onClick={() => {
-          setCurrentOffset(currentOffset - 1);
-          // Don't animate after clicking button
-          setShouldAnimateChart(false)}}
-        >
-          &lt;
-        </Button>
-      </Col>
+          {/* Date */}
+          <Col xs={8} className="d-flex align-items-center justify-content-center">
+            <div className="chartTitle">
+              {displayDate}
+            </div>
+          </Col>
 
-      {/* Date */}
-      <Col>
-        <div className="chartTitle">
-          {displayDate}
-        </div>
-      </Col>
-
-      {/* Right Arrow: ">" */}
-      <Col xs={2} className="d-flex align-items-center justify-content-end">
-        <Button size="lg" variant="light" onClick={() => {
-          setCurrentOffset(currentOffset + 1);
-          // Don't animate after clicking button
-          setShouldAnimateChart(false)}}
-        >
-          &gt;
-        </Button>
+          {/* Right Arrow: ">" */}
+          <Col xs={2} className="d-flex align-items-center justify-content-end">
+            <Button size="lg" variant="light" onClick={() => {
+              setCurrentOffset(currentOffset + 1);
+              // Don't animate after clicking button
+              setShouldAnimateChart(false)}}
+            >
+              &gt;
+            </Button>
+          </Col>
+        </Row>
+        {/* Spacing between rows on mobile */}
+        <div className="d-block d-sm-none py-1"></div>
       </Col>
 
       {/* Dropdown to choose which cafe to display on the graph */}
-      <Col xs={4} className="d-flex align-items-center justify-content-end">
+      <Col sm={4} className="d-flex align-items-center justify-content-end">
+        
         <Dropdown className="w-100">
           {/* <Dropdown.Toggle variant="success" id="dropdown-basic"> */}
           <Dropdown.Toggle className="w-100" size="lg" variant="light" style={{color: 'pink'}} id="dropdown-basic">

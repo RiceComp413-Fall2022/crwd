@@ -8,15 +8,15 @@ function StatusRow() {
 
   return (
     <Row>
-      <Col md={true}>
+      <Col sm={true}>
         <LocationStatusBox displayName='Chaus' locationName='chaus'/>
       </Col>
 
-      <Col md={true}>
+      <Col sm={true}>
         <LocationStatusBox displayName="Brochstein" locationName='brochstein'/>
       </Col>
 
-      <Col md={true}>
+      <Col sm={true}>
         <LocationStatusBox displayName="Audrey's" locationName='audreys'/>
       </Col>
     </Row>

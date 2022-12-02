@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Row, Dropdown } from 'react-bootstrap';
+import { Button, Col, Row, Dropdown } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -136,24 +136,8 @@ function Graph() {
 
     <Row className="pb-4">
 
-      {/* Dropdown to choose which cafe to display on the graph */}
-      <Col xs={1} className="d-flex align-items-center justify-content-end">
-      <Dropdown>
-        {/* <Dropdown.Toggle variant="success" id="dropdown-basic"> */}
-        <Dropdown.Toggle size="lg" variant="light" style={{color: 'pink'}} id="dropdown-basic">
-          Cafe
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={() => {setSelectedLocation('chaus'); setPrettyLocation('Chaus');}}>Chaus</Dropdown.Item>
-          <Dropdown.Item onClick={() => {setSelectedLocation('brochstein'); setPrettyLocation('Brochstein');}}>Brochstein</Dropdown.Item>
-          <Dropdown.Item onClick={() => {setSelectedLocation('audreys'); setPrettyLocation('Audrey\'s');}}>Audrey's</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-      </Col>
-
       {/* Left Arrow: "<" */}
-      <Col xs={2} className="d-flex align-items-center justify-content-end">
+      <Col xs={1} className="d-flex align-items-center justify-content-start">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset - 1);
           // Don't animate after clicking button
@@ -166,12 +150,12 @@ function Graph() {
       {/* Date */}
       <Col>
         <div className="chartTitle">
-          {displayDate + " – " + prettyLocation}
+          {displayDate}
         </div>
       </Col>
 
       {/* Right Arrow: ">" */}
-      <Col xs={2} className="d-flex align-items-center justify-content-start">
+      <Col xs={1} className="d-flex align-items-center justify-content-end">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset + 1);
           // Don't animate after clicking button
@@ -179,6 +163,22 @@ function Graph() {
         >
           &gt;
         </Button>
+      </Col>
+
+      {/* Dropdown to choose which cafe to display on the graph */}
+      <Col xs={4} className="d-flex align-items-center justify-content-end">
+        <Dropdown className="w-100">
+          {/* <Dropdown.Toggle variant="success" id="dropdown-basic"> */}
+          <Dropdown.Toggle className="w-100" size="lg" variant="light" style={{color: 'pink'}} id="dropdown-basic">
+            {prettyLocation}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => {setSelectedLocation('chaus'); setPrettyLocation('Chaus');}}>Chaus</Dropdown.Item>
+            <Dropdown.Item onClick={() => {setSelectedLocation('brochstein'); setPrettyLocation('Brochstein');}}>Brochstein</Dropdown.Item>
+            <Dropdown.Item onClick={() => {setSelectedLocation('audreys'); setPrettyLocation('Audrey\'s');}}>Audrey's</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </Col>
     </Row>
 

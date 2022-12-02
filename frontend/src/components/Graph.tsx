@@ -137,7 +137,7 @@ function Graph() {
     <Row className="pb-4">
 
       {/* Left Arrow: "<" */}
-      <Col xs={1} className="d-flex align-items-center justify-content-start">
+      <Col xs={2} className="d-flex align-items-center justify-content-start">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset - 1);
           // Don't animate after clicking button
@@ -155,7 +155,7 @@ function Graph() {
       </Col>
 
       {/* Right Arrow: ">" */}
-      <Col xs={1} className="d-flex align-items-center justify-content-end">
+      <Col xs={2} className="d-flex align-items-center justify-content-end">
         <Button size="lg" variant="light" onClick={() => {
           setCurrentOffset(currentOffset + 1);
           // Don't animate after clicking button

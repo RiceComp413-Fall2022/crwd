@@ -7,8 +7,10 @@
 }
 
 /* Override bootstrap button color */
-.btn {
+.btn, .dropdown-item {
   color: #322620 !important;
+  background-color: white !important;
+  font-weight: bold !important;
 }
 
 .chartTitle {

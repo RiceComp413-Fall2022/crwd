@@ -95,49 +95,45 @@ class Service:
                 'backgroundColor': 'white',
                 'textColor': 'black'
             }
-
-        # Default to white text
-        text_color = 'white'
+        # Get last available time and count from data
+        last_update_time_formatted, last_count = self.data[-1]
+        # Convert time to "time ago" (e.g. "3 minutes ago")
+        last_update_time = datetime.strptime(last_update_time_formatted, self.STORED_DATETIME_FORMAT)
+        current_time = datetime.now(self.timezone).replace(tzinfo=None)  # Remove timezone info for timeago comparison
+        time_ago_message = timeago.format(last_update_time, current_time)
+        # Create message saying "Updated X minutes ago"
+        updated_msg = f'Updated {time_ago_message}'
 
         if self.is_open():
-            #  is open -> msg: " is X% busy", updatedMsg: "Updated Y ago"
-            # Get last value
-            formatted_time, count = self.data[-1]
-
-            # Convert time to "time ago" (e.g. "3 minutes ago")
-            last_update_time = datetime.strptime(formatted_time, self.STORED_DATETIME_FORMAT)
-            # Remove timezone info for comparison (required by timeago)
-            current_time = datetime.now(self.timezone).replace(tzinfo=None)
-            time_ago_message = timeago.format(last_update_time, current_time)
-
-            perc = self.convert_count_to_percent(count)
+            #  is open -> msg: " is X% busy"
+            perc = self.convert_count_to_percent(last_count)
             if perc > 90:
                 background_color = '#322620' #bistro
+                text_color = 'white'
             elif perc > 60:
                 background_color = '#50392F' #dark liver horses
+                text_color = 'white'
             elif perc > 30:
                 background_color = '#6D4C3D' #coffee
+                text_color = 'white'
             else:
                 background_color = '#A58B7A' #beaver
                 text_color = 'black'
             msg = f' is {perc}% full'
-            updated_msg = f'Updated {time_ago_message}'
         else:
-            #  is closed -> msg: "is closed!", updatedMsg: "will open at X"
-            msg = 'is closed!'
-            text_color = 'black'
-            background_color = 'white'
-
+            #  is closed -> msg: "is closed until X"
             # get the current time
             today = datetime.now(self.timezone)
             opening_today = self.open_hours[today.weekday()][0]
-            # Before opening time today -> return the opening time
+            # Before opening time today -> use the opening time today
             if today.time() < opening_today.time():
-                updated_msg = f'opens at {opening_today.time().strftime("%-I:%M %p")}'
+                opening_time = opening_today.time()
             else:
-                # After closing time today -> return the opening time opening time for the next day (weekday % 6) + 1
-                opening_tmrw = self.open_hours[(today.weekday() % 6) + 1][0]
-                updated_msg = f'opens at {opening_tmrw.time().strftime("%-I:%M %p")} tomorrow'
+                # After closing time today -> use the opening time opening time for the next day (weekday % 6) + 1
+                opening_time = self.open_hours[(today.weekday() % 6) + 1][0]
+            msg = f'opens at {opening_time.strftime("%-I:%M %p")}'
+            background_color = 'white'
+            text_color = 'black'
         return {
             'msg': msg,
             'updatedMsg': updated_msg,
@@ -195,7 +191,7 @@ class Service:
                     datetime_to_perc[prediction_datetime_str] = self.convert_count_to_percent(count)
         return datetime_to_perc 
 
-    def calculate_predicted_data(self, weekday) -> List[Tuple[str, int]]:
+    def calculate_predicted_data(self, weekday) -> List[Tuple[str, float]]:
         '''
         Calculates predicted (time, count) pairs from historical data. 
         The result is stored in self.predicted_data.
@@ -203,7 +199,7 @@ class Service:
         '''
         # Check for no data
         if not self.data:
-            print('[ERROR] Attempting to make predictions on no data.')
+            print('[ERROR] Attempted to make predictions on no data.')
             return []
         
         print('Calculating predicted data.')
@@ -224,6 +220,10 @@ class Service:
         df_by_30_min['time'] = df_by_30_min.index.to_series().dt.time
         # Find the mean time per 30-minute interval
         summary_df = df_by_30_min.groupby('time').mean()
+        # Drop NaN (this can happen if there isn't enough data to predict)
+        if summary_df['count'].isna().any():
+            print('[WARNING] Found NaN in predictions. Likely attempted to make predictions with insufficient data. Dropping NaNs.')
+            summary_df = summary_df.dropna()
         # Use a string (e.g. '08:30') to represent the time
         summary_df = summary_df.set_index(summary_df.index.to_series().astype(str).str.slice(0, 5))
         # Return list of (time_string, count) pairs

@@ -25,8 +25,8 @@ interface StatusBoxProps {
 function LocationStatusBox(props: StatusBoxProps): ReactElement {
 
   const defaultState = {
-    msg: 'N/A',
-    updateMsg: 'N/A',
+    msg: '', // e.g. "is 50% full"
+    updateMsg: '', // e.g. "Updated 5 minutes ago"
     backgroundColor: 'white',
     textColor: 'black'
   };

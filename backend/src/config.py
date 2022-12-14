@@ -19,7 +19,8 @@ AUDREYS_OPEN_HOURS = {0 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 
               3 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 18, 0, 0)),
               4 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 18, 0, 0)),
               5 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 17, 0, 0)),
-              6 : (datetime(2022, 1, 1, 23, 59, 59), datetime(2022, 1, 1, 23, 59, 59))}
+              # Closed all day on Sunday
+              6 : (datetime(2022, 1, 1, 0, 0, 0), datetime(2022, 1, 1, 0, 0, 0))}
 
 BROCHSTEIN_OPEN_HOURS = {0 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 19, 0, 0)),
               1 : (datetime(2022, 1, 1, 7, 30, 0), datetime(2022, 1, 1, 19, 0, 0)),

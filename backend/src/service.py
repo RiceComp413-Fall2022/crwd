@@ -70,7 +70,7 @@ class Service:
                     if date.time() >= opening.time() and date.time() <= closing.time():
                         # Calculate a "smoothed" value as the average of current and previous value
                         if prev:
-                            smooth = (count + prev) / 2
+                            smooth = int((count + prev) / 2)
                         else:
                             smooth = count
                         prev = count
@@ -156,7 +156,7 @@ class Service:
     #               Predictions                 #
     #############################################
 
-    def get_predicted_data(self, date: datetime, last_date_str, last_count) -> Dict[str, float]:
+    def get_predicted_data(self, date: datetime, last_date_str: Optional[str], last_count: Optional[int]) -> Dict[str, float]:
         '''
         Creates a list of percentages of how busy Chaus was at every minute from now to close based on predictions.
         '''
@@ -176,7 +176,7 @@ class Service:
 
         if date.date() >= today.date():
             # Use the last observed value as first predicted value
-            if date.date() == now.date() and date.time() >= opening.time() and date.time() <= closing.time():
+            if last_count and date.date() == now.date() and date.time() >= opening.time() and date.time() <= closing.time():
                 datetime_to_perc[last_date_str] = self.convert_count_to_percent(last_count)
             # Use values from predicted data from now until closing
             for time_str, count in predicted_data:
@@ -188,7 +188,7 @@ class Service:
                 if (date.date() > now.date() or time >= now.time()) and time >= opening.time() and time <= closing.time():
                     # Create string with today's date + time from prediction
                     prediction_datetime_str = prediction_datetime.strftime(self.STORED_DATETIME_FORMAT)
-                    datetime_to_perc[prediction_datetime_str] = self.convert_count_to_percent(count)
+                    datetime_to_perc[prediction_datetime_str] = self.convert_count_to_percent(int(count))
         return datetime_to_perc 
 
     def calculate_predicted_data(self, weekday) -> List[Tuple[str, float]]:
@@ -312,7 +312,7 @@ class Service:
         self.min_count, self.max_count = all_crowd_values[percentile1], all_crowd_values[percentile99]
         print(f'Calculated min_count = {self.min_count}, max_count = {self.max_count}.')
     
-    def convert_count_to_percent(self, count) -> int:
+    def convert_count_to_percent(self, count: int) -> int:
         '''Converts a device count (e.g. 60 devices) to a percent (e.g. 30% full)'''
         # Calculate the percentage using the pre-calculated min/max
         percent = int(((count - self.min_count) / (self.max_count - self.min_count)) * 100)

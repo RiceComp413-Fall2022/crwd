@@ -19,3 +19,15 @@
   font-size: calc(2vh + 1.5vw);
   color: #322620;
 }
+
+.noDataTextBox {
+  border-radius: 20px !important;
+  border-width: 0px !important;
+  height: 50vh !important;
+  max-height: 50vh;
+}
+
+.noDataText {
+  font-size: calc(2vh + 1.5vw) !important;
+  font-weight: bold;
+}

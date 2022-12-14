@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Row, Dropdown } from 'react-bootstrap';
+import { Button, Col, Row, Dropdown, Card } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,26 +19,27 @@ import { BACKEND_URL } from '../Constants';
 
 function Graph() {
   // Store server response
-  const [cafeData, setCafeData] = useState({});
-  const [displayDate, setDisplayDate] = useState("");
+  const [historicalData, setHistoricalData] = useState({});
   const [predictedData, setPredictedData] = useState({});
-  const [currentOffset, setCurrentOffset] = useState(0);
+  const [displayDate, setDisplayDate] = useState("");
+  // Save the offset of the day to fetch (e.g. 0: today, -1: yesterday, +1: tomorrow)
+  const [selectedOffsetDays, setSelectedOffsetDays] = useState(0);
   const [shouldAnimateChart, setShouldAnimateChart] = useState(true);
   const [selectedLocation, setSelectedLocation] = useState('chaus')
   const [prettyLocation, setPrettyLocation] = useState('Chaus')
 
   const SERVER_TIME_FORMAT = 'MM/dd/yyyy HH:mm';
 
-  // Fetch /getDailyData from server
+  // Fetch /dailyData from server
   useEffect(() => {
-    fetch(BACKEND_URL + "/dailyData/" + selectedLocation + "/" + currentOffset)
+    fetch(`${BACKEND_URL}/dailyData/${selectedLocation}/${selectedOffsetDays}`)
     .then((response) => response.json())
     .then((response) => {
-      setCafeData(response.historical);
+      setHistoricalData(response.historical);
       setDisplayDate(response.msg);
       setPredictedData(response.predicted);
     });
-  }, [currentOffset, selectedLocation])
+  }, [selectedOffsetDays, selectedLocation])
 
   ChartJS.register(
     CategoryScale,
@@ -116,7 +117,7 @@ function Graph() {
     datasets: [
       {
         label: 'chausCrowd',
-        data: cafeData,
+        data: historicalData,
         // data: {"30/09/2022 08:48": 40.19607843137255, "30/09/2022 08:06": 49.01960784313725, "30/09/2022 08:49": 40.19607843137255, "30/09/2022 08:05": 49.01960784313725},
         borderColor: '#322620',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -131,6 +132,9 @@ function Graph() {
     ],
   };
 
+  // Check wether there is data to show (e.g. a day when the location never opens will have no data)
+  const shouldShowGraph: boolean = Object.keys(historicalData).length > 0 || Object.keys(predictedData).length > 0
+
   return (
     <>
 
@@ -141,7 +145,7 @@ function Graph() {
         {/* Left Arrow: "<" */}
           <Col xs={2} className="d-flex align-items-center justify-content-start">
             <Button size="lg" variant="light" onClick={() => {
-              setCurrentOffset(currentOffset - 1);
+              setSelectedOffsetDays(selectedOffsetDays - 1);
               // Don't animate after clicking button
               setShouldAnimateChart(false)}}
             >
@@ -159,7 +163,7 @@ function Graph() {
           {/* Right Arrow: ">" */}
           <Col xs={2} className="d-flex align-items-center justify-content-end">
             <Button size="lg" variant="light" onClick={() => {
-              setCurrentOffset(currentOffset + 1);
+              setSelectedOffsetDays(selectedOffsetDays + 1);
               // Don't animate after clicking button
               setShouldAnimateChart(false)}}
             >
@@ -189,8 +193,18 @@ function Graph() {
       </Col>
     </Row>
 
-    {/* Graph */}
-    <Line className="graph" options={chartOptions} data={data} />
+    {/* Graph (or "No data!") */}
+    {shouldShowGraph ?
+      // Graph
+      <Line className="graph" options={chartOptions} data={data} />
+      :
+      // No data!
+      <Card className={"noDataTextBox"}>
+        <Card.Body className={"d-flex align-items-center justify-content-center"}>
+            <h5 className="noDataText">No data!</h5>
+        </Card.Body>
+      </Card>
+    }
   </>
   );
 }
